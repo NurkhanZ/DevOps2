@@ -16,8 +16,8 @@ deploy-app:
   tags:
     - shell
   script:
-    - kubeclt create namespace demo || true
-    - kubeclt apply -f minikube_dir/deployment.yaml -n demo
+    - kubectl create namespace demo || true
+    - kubectl apply -f minikube_dir/deployment.yaml -n demo
     - kubectl get pods
   needs:
     - setup-minikube
