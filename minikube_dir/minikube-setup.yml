@@ -1,0 +1,40 @@
+- hosts: servers
+  become: yes
+
+  vars:
+    user: favom
+
+  tasks:
+  - name: Update pacman
+    pacman: 
+      update_cache: yes
+      upgrade: yes
+
+  - name: Install base dependencies
+    pacman:
+      name:
+        - curl
+        - wget
+        - virtualbox
+        - virtualbox-host-modules-arch
+        - kubectl
+        - conntrack-tools
+        - socat
+        - minikube
+      state: present
+
+  - name: Add user to vboxusers group
+    user: 
+      name: "{{ user }}"
+      groups: vboxusers
+      append: yes
+
+  - name: Start minikube cluster
+    shell: |
+      minikube start --driver=virtualbox --nodes=3
+    environment:
+      CHANGE_MINIKUBE_NONE_USER: "true"
+
+  - name: Wait for nodes to be ready
+    command: kubectl wait --for=condition=Ready nodes --all --timeout=120s
+

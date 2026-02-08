@@ -1,0 +1,25 @@
+stages:
+  - setup
+  - deploy
+
+setup-minikube:
+  stage: setup
+  tags:
+    - shell
+  script:
+    - ansible-playbook minikube-setup.yml
+  only:
+    - main
+
+deploy-app:
+  stage: deploy
+  tags:
+    - shell
+  script:
+    - kubeclt create namespace demo || true
+    - kubeclt apply -f minikube_dir/deployment.yaml -n demo
+    - kubectl get pods
+  needs:
+    - setup-minikube
+  only:
+    - main
