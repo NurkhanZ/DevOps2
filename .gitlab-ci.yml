@@ -7,7 +7,7 @@ setup-minikube:
   tags:
     - shell
   script:
-    - ansible-playbook minikube-setup.yml
+    - ansible-playbook minikube_dir/minikube-setup.yml
   only:
     - main
 
