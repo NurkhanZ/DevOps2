@@ -1,4 +1,5 @@
-- hosts: servers
+- hosts: localhost
+  connection: local
   become: yes
 
   vars:
@@ -37,4 +38,13 @@
 
   - name: Wait for nodes to be ready
     command: kubectl wait --for=condition=Ready nodes --all --timeout=120s
+
+  - name: Copy kubeconfig for runner user
+    copy:
+      src: /root/.kube/config
+      dest: /var/lib/gitlab-runner/.kube/config
+      remote_src: yes
+      owner: gitlab-runner
+      group: gitlab-runner
+      mode: '0600'
 

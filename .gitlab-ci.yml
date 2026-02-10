@@ -20,8 +20,9 @@ deploy-app:
   stage: deploy
   tags:
     - shell
+  variables:
+    KUBECONFIG: /var/lib/gitlab-runner/.kube/config
   script:
-    - export KUBECONFIG=$CI_PROJECT_DIR/.kube/config
     - kubectl config use-context minikube
     - kubectl create namespace demo || true
     - kubectl apply -f minikube_dir/deployment.yaml -n demo
