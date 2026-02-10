@@ -7,7 +7,12 @@ setup-minikube:
   tags:
     - shell
   script:
-    - ansible-playbook -i ansible/hosts.ini minikube_dir/minikube-setup.yml
+    - ansible-playbook minikube_dir/minikube-setup.yml
+    - mkdir -p $CI_PROJECT_DIR/.kube
+    - cp ~/.kube/config $CI_PROJECT_DIR/.kube/config
+  artifacts:
+    paths:
+      - .kube/config
   only:
     - main
 
@@ -16,10 +21,13 @@ deploy-app:
   tags:
     - shell
   script:
+    - export KUBECONFIG=$CI_PROJECT_DIR/.kube/config
+    - kubectl config use-context minikube
     - kubectl create namespace demo || true
     - kubectl apply -f minikube_dir/deployment.yaml -n demo
-    - kubectl get pods
+    - kubectl get pods -n demo
   needs:
-    - setup-minikube
+    - job: setup-minikube
+      artifacts: true
   only:
     - main
