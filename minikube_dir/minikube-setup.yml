@@ -32,7 +32,7 @@
 
   - name: Start minikube cluster
     shell: |
-      minikube start --driver=virtualbox --nodes=3 --force
+      minikube start --driver=virtualbox --nodes=3 --force --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers 
     environment:
       CHANGE_MINIKUBE_NONE_USER: "true"
 
