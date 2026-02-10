@@ -32,7 +32,7 @@
 
   - name: Start minikube cluster
     shell: |
-      minikube start --driver=virtualbox --nodes=3
+      minikube start --driver=virtualbox --nodes=3 --force
     environment:
       CHANGE_MINIKUBE_NONE_USER: "true"
 
