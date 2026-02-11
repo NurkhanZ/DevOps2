@@ -30,6 +30,15 @@
       groups: vboxusers
       append: yes
 
+  - name: Fix minikube permissions
+    file: 
+      path: /tmp/minikube-locks
+      state: directory
+      mode: '1777'
+      owner: gitlab-runner
+      group: gitlab-runner
+    become: yes
+
   - name: Start minikube cluster
     become: no
     become_user: "{{ user }}"
