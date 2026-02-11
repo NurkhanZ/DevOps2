@@ -1,0 +1,72 @@
+  hosts: localhost
+  connection: local
+  become: yes
+
+  vars:
+    user: gitlab-runner
+
+  tasks:
+  - name: Update pacman
+    pacman:
+      update_cache: yes
+      upgrade: yes
+
+  - name: Install containerd
+    package: 
+      name: containerd
+      state: present
+
+  - name: Start containerd
+    service:
+      name: containerd
+      state: started
+      enabled: yes
+
+  - name: Create directories
+    file:
+      path: "{{ item }}"
+      state: directory
+    loop:
+      - /etc/kubernetes/manifests
+      - /etc/cni/net.d
+      - /opt/cni/bin
+      - /var/lib/kubelet
+
+  - name: Copy kubelet config
+    copy:
+      src: config.yaml
+      dest: /var/lib/kubelet/config.yaml
+
+  - name: Copy CNI config
+    copy:
+      src: 10-bridge.conf
+      dest: /etc/cni/net.d/10-bridge.conf
+
+  - name: Copy static pod manifest
+    copy:
+      src: keycloak-pod.yaml
+      dest: /etc/kubernetes/manifests/keycloak-pod.yaml
+
+  - name: Create kubelet systemd service
+    copy:
+      dest: /etc/systemd/system/kubelet.service
+      content: |
+        [Unit]
+        Description=Standalone Kubelet
+        After=containerd.service
+
+        [Service]
+        ExecStart=/usr/bin/kubelet --config=/var/lib/kubelet/config.yaml
+        Restart=always
+
+        [Install]
+        WantedBy=multi-user.target
+
+  - name: Reload systemd
+    command: systemctl daemon-reload
+
+  - name: Start kubelet
+    service:
+      name: kubelet
+      state: started
+      enabled: yes

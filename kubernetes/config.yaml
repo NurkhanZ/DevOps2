@@ -1,0 +1,18 @@
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+
+staticPodPath: /etc/kubernetes/manifests
+containerRuntimeEndpoint: unix:///run/containerd/containerd.sock
+failSwapOn: false
+
+authentication:
+  anonymous:
+    enabled: true
+  webhook:
+    enabled: false
+
+authorization:
+  mode: AlwaysAllow
+
+readOnlyPort: 0
+healthzPort: 0
