@@ -51,7 +51,7 @@
     become_user: "{{ user }}"
     shell: |
       minikube start --driver=virtualbox --nodes=3
-    ennvironment:
+    environment:
       HOME: "/var/lib/gitlab-runner"
       CHANGE_MINIKUBE_NONE_USER: "true"
 
