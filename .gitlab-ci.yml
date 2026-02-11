@@ -8,8 +8,8 @@ setup-minikube:
     - shell
   script:
     - ansible-playbook minikube_dir/minikube-setup.yml
-    - mkdir -p $CI_PROJECT_DIR/.kube
-    - cp ~/.kube/config $CI_PROJECT_DIR/.kube/config
+#    - mkdir -p $CI_PROJECT_DIR/.kube
+#    - cp ~/.kube/config $CI_PROJECT_DIR/.kube/config
   artifacts:
     paths:
       - .kube/config
