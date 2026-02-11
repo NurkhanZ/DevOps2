@@ -4,6 +4,8 @@ stages:
 deploy-pod:
   stage: deploy
   image: python:3.11
+  tags:
+    - shell
   script: 
     - ansible-playbook kubernetes/setup-kubelet.yaml -i localhost
   only:
