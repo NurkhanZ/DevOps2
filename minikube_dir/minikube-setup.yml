@@ -51,8 +51,9 @@
     become_user: "{{ user }}"
     shell: |
       minikube start --driver=virtualbox --nodes=3
-    HOME: "/var/lib/gitlab-runner"
-    CHANGE_MINIKUBE_NONE_USER: "true"
+    ennvironment:
+      HOME: "/var/lib/gitlab-runner"
+      CHANGE_MINIKUBE_NONE_USER: "true"
 
   - name: Wait for nodes to be ready
     command: kubectl wait --for=condition=Ready nodes --all --timeout=120s
