@@ -7,6 +7,6 @@ deploy-pod:
   tags:
     - shell
   script: 
-    - ansible-playbook kubernetes/setup-kubelet.yaml -i localhost
+    - ansible-playbook kubernetes/setup-kubelet.yaml
   only:
     - main
