@@ -12,7 +12,7 @@ setup-minikube:
 #    - cp ~/.kube/config $CI_PROJECT_DIR/.kube/config
   artifacts:
     paths:
-      - .kube/config
+      -$CI_PROJECT_DIR/.kube/config
   only:
     - main
 
