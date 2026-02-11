@@ -3,7 +3,7 @@
   become: yes
 
   vars:
-    user: favom
+    user: gitlab-runner
 
   tasks:
   - name: Update pacman
@@ -31,10 +31,22 @@
       append: yes
 
   - name: Start minikube cluster
+    become: no
+    become_user: "{{ user }}"
     shell: |
-      minikube start --driver=virtualbox --nodes=3 --force --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers 
+      minikube start --driver=virtualbox \
+      --nodes=3 \
+      --force \
+      --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers 
     environment:
+      HOME: "/var/lib/gitlab-runner"
       CHANGE_MINIKUBE_NONE_USER: "true"
 
   - name: Wait for nodes to be ready
     command: kubectl wait --for=condition=Ready nodes --all --timeout=120s
+
+  - name: Copy kubeconfig
+    copy: 
+      src: $CI_PROJECT_DIR/.kube/config
+      dest: "{{ lookup('env', 'CI_PROJECT_DIR') }}/.kube/config"
+      remote_src: yes
