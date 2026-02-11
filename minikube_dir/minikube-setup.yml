@@ -42,7 +42,7 @@
   - name: Copy kubeconfig for runner user
     copy:
       src: /root/.kube/config
-      dest: /var/lib/gitlab-runner/.kube/config
+      dest: $CI_PROJECT_DIR/gitlab-runner/.kube/config
       remote_src: yes
       owner: gitlab-runner
       group: gitlab-runner
