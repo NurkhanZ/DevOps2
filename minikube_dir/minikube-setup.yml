@@ -73,3 +73,10 @@
       src: /var/lib/gitlab-runner/.kube/config
       dest: "{{ lookup('env', 'CI_PROJECT_DIR') }}/.kube/config"
       remote_src: yes
+
+  - name: Fix gitlab-runner permissions
+    file:
+      path: "{{ lookup('env', 'CI_PROJECT_DIR') }}/.kube"
+      owner: gitlab-runner
+      group: gitlab-runner
+      recurse: yes
