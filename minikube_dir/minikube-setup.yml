@@ -34,10 +34,7 @@
     become: no
     become_user: "{{ user }}"
     shell: |
-      minikube start --driver=virtualbox \
-      --nodes=3 \
-      --force \
-      --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers 
+      minikube start --driver=virtualbox --nodes=3 --force --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
     environment:
       HOME: "/var/lib/gitlab-runner"
       CHANGE_MINIKUBE_NONE_USER: "true"
