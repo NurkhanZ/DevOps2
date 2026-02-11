@@ -1,34 +1,37 @@
-stages:
-  - setup
-  - deploy
+# stages:
+#  - setup
+#  - deploy
 
-setup-minikube:
-  stage: setup
-  tags:
-    - shell
-  script:
-    - ansible-playbook minikube_dir/minikube-setup.yml
-  artifacts:
-    paths:
-      - .kube/config
-  only:
-    - main
+#setup-minikube:
+#  stage: setup
+#  tags:
+#    - shell
+#  script:
+#    - ansible-playbook minikube_dir/minikube-setup.yml
+#  artifacts:
+#    paths:
+#      - .kube/config
+#  only:
+#    - main
 
-deploy-app:
-  stage: deploy
-  tags:
-    - shell
-  variables:
-    KUBECONFIG: $CI_PROJECT_DIR/.kube/config
-  script:
-    - export KUBECONFIG=$CI_PROJECT_DIR/.kube/config
-    - kubectl get nodes
-    - kubectl config use-context minikube
-    - kubectl create namespace demo || true
-    - kubectl apply -f minikube_dir/deployment.yaml -n demo
-    - kubectl get pods -n demo
-  needs:
-    - job: setup-minikube
-      artifacts: true
-  only:
-    - main
+#deploy-app:
+#  stage: deploy
+#  tags:
+#    - shell
+#  variables:
+#    KUBECONFIG: $CI_PROJECT_DIR/.kube/config
+#  script:
+#    - export KUBECONFIG=$CI_PROJECT_DIR/.kube/config
+#    - kubectl get nodes
+#    - kubectl config use-context minikube
+#    - kubectl create namespace demo || true
+#    - kubectl apply -f minikube_dir/deployment.yaml -n demo
+#    - kubectl get pods -n demo
+#  needs:
+#    - job: setup-minikube
+#      artifacts: true
+#  only:
+#    - main
+
+include:
+  - local: 'kubernetes/.gitlab-deploy.yml'
