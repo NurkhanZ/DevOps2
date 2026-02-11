@@ -21,7 +21,7 @@ deploy-app:
   tags:
     - shell
   variables:
-    KUBECONFIG: /var/lib/gitlab-runner/.kube/config
+    KUBECONFIG: $CI_PROJECT_DIR/.kube/config
   script:
     - kubectl config use-context minikube
     - kubectl create namespace demo || true
