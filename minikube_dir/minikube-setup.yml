@@ -39,13 +39,20 @@
       group: gitlab-runner
     become: yes
 
+  - name: Delete old minikube cluster
+    become: no
+    become_user: gitlab-runner
+    environment:
+      HOME: "/var/lib/gitlab-runner"
+    command: minikube delete
+
   - name: Start minikube cluster
     become: no
     become_user: "{{ user }}"
     shell: |
       minikube start --driver=virtualbox --nodes=3
-      HOME: "/var/lib/gitlab-runner"
-      CHANGE_MINIKUBE_NONE_USER: "true"
+    HOME: "/var/lib/gitlab-runner"
+    CHANGE_MINIKUBE_NONE_USER: "true"
 
   - name: Wait for nodes to be ready
     command: kubectl wait --for=condition=Ready nodes --all --timeout=120s
