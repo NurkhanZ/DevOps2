@@ -1,0 +1,24 @@
+#!/bin/bash
+
+URL="https://github.com/nginx/nginx.git"
+BRANCH="master"
+FILE_PATH="docs/html/index.html"
+INTERVAL=60
+
+while true; do
+	TEMP_DIR="$(mktemp -d)"
+	cd "$TEMP_DIR"
+
+	git init -q
+	git remote add origin "$URL"
+	git fetch --depth=1 origin "$BRANCH"
+	git checkout "origin/$BRANCH" -- "$FILE_PATH"
+
+	mv "$FILE_PATH" "$OLDPWD/index.html"
+
+	cd "$OLDPWD"
+	rm -rf "$TEMP_DIR"
+
+	echo "$(date): index.html updated."
+	sleep "$INTERVAL"
+done

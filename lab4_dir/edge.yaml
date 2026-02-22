@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-test
+  labels:
+    app: nginx-scrapper
+spec:
+  volumes:
+  - name: shared-data
+    emptyDir: {}
+  - name: scrapper-configmap
+    configMap:
+      name: scrapper-cm
+      defaultMode: 0755
+
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: shared-data
+      mountPath: /usr/share/nginx/html
+
+  - name: scrapper
+    image: busybox:1.27.2
+    workingDir: /data
+    volumeMounts:
+    - name: shared-data
+      mountPath: /data
+    - name: scrapper-configmap
+      mountPath: /scrapper.sh
+      subPath: scrapper.sh
+    command: ["/bin/sh"]
+    args:
+    - -c
+    - /scrapper.sh; sleep 30; rm -f index.html; sleep 600
+    livenessProbe:
+      exec:
+        command:
+        - /bin/sh
+        - -c
+        - cat /data/index.html
+      initialDelaySeconds: 10
+      periodSeconds: 10 
