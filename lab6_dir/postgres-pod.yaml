@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-app
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-pod
+  namespace: web-app
+  labels:
+    app: postgres
+spec:
+  containers:
+  - name: postgres
+    image: postgres:15
+    ports:
+    - containerPort: 5432
+    env:
+      - name: POSTGRES_DB
+        value: keycloakdb
+      - name: POSTGRES_USER
+        value: keycloak
+      - name: POSTGRES_PASSWORD
+        value: keycloakpass
+    volumeMounts:
+    - name: pgdata
+      mountPath: /var/lib/postgresql/data
+  volumes:
+  - name: pgdata
+    emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: web-app
+spec:
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432

@@ -3,7 +3,6 @@ kind: Pod
 metadata:
   name: best-effort
 spec:
-  priorityClassName: protected-pod
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
