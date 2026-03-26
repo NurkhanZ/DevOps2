@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "keycloak.fullname" . }}-service
+  namespace: {{ .Values.global.namespace }}
+  labels: {{- include "keycloak.labels" . | nindent 4}}
+spec:
+  selector:
+    {{- include "keycloak.selectorLabels" . | nindent 4 }}
+  ports:
+  - port: {{ .Values.keycloak.port }}
+    targetPort: {{ .Values.keycloak.port }}

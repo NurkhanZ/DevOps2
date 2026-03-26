@@ -1,0 +1,33 @@
+global:
+  domain: lab-keycloak.test
+  namespace: web-app
+
+networkPolicy:
+  port: 53
+
+roleBinding:
+  subjects:
+    kind: ServiceAccount
+    name: default
+
+postgres:
+  appName: postgres
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: 15
+  port: 5432
+  env: 
+    - name: POSTGRES_DB
+      value: keycloakdb
+    - name: POSTGRES_USER
+      value: keycloak
+    - name: POSTGRES_PASSWORD
+      value: keycloakpass
+  volumeMounts:
+    name: pgdata
+    mountPath: /var/lib/postgresql/data
+  resources:
+    storage: 1Gi
+
+

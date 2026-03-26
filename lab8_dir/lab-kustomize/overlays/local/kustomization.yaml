@@ -1,0 +1,16 @@
+resources:
+- ../../base
+
+patches:
+  - path: postgres-patch.yaml
+
+configMapGenerator:
+- name: web-app-content
+  files:
+  - index.html
+
+labels:
+  - pairs:
+      env: local
+    includeSelectors: true
+    includeTemplates: true

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak-deployment
+  namespace: web-app
+  labels:
+    app: keycloak
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+      - name: keycloak
+        image: quay.io/keycloak/keycloak:latest
+        ports:
+        - containerPort: 8080
+        args: ["start", "--http-enabled=true", "--hostname-strict=false"]
+        env:
+        - name: KC_PROXY_HEADERS
+          value: "xforwarded"
+    
+        - name: KC_HOSTNAME
+          value: https://lab-keycloak.test
+        - name: KC_HOSTNAME_ADMIN
+          value: https://lab-keycloak.test
+  
+        - name: KC_DB
+          value: postgres
+        - name: KC_DB_URL_HOST
+          value: postgres-service
+        - name: KC_DB_URL_DATABASE
+          value: keycloakdb
+        - name: KC_DB_USERNAME
+          value: keycloak
+        - name: KC_DB_PASSWORD
+          value: keycloakpass
+
+        - name: KC_BOOTSTRAP_ADMIN_USERNAME
+          value: admin
+        - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+          value: admin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-service
+  namespace: web-app
+spec:
+  selector:
+    app: keycloak
+  ports:
+  - port: 8080
+    targetPort: 8080

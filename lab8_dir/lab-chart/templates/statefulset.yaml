@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.postgres.appName }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.postgres.appName }}
+  serviceName: postgres-headless-service
+  replicas: {{ .Values.postgres.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postgres.appName }}
+    spec:
+      containers:
+      - name: {{ .Values.postgres.appName }}
+        image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.postgres.port }}
+        env:
+          {{- range .Values.postgres.env }}
+          - name: {{ .name }}
+            value: {{ .value }}
+          {{- end }}
+        volumeMounts:
+        - name: {{ .Values.postgres.volumeMounts.name }}
+          mountPath: {{ .Values.postgres.volumeMounts.mountPath }}
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/pg_isready
+            - "-U"
+            - "keycloak"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/pg_isready
+            - "-U"
+            - "keycloak"
+            - "-d"
+            - "keycloakdb"
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.postgres.volumeMounts.name }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.postgres.resources.storage }}
