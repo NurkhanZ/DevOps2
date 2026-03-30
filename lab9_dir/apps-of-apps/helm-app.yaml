@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gitlab.com/NurkhanZ/DevOps2.git
+    targetRevision: HEAD
+    path: chart/lab-chart
+    helm:
+      valueFiles:
+        - ../../helm-app/local.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated: {}

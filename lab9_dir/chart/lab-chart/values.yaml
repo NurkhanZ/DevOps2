@@ -1,0 +1,62 @@
+﻿global:
+  domain: lab-keycloak.test
+  namespace: web-app
+
+networkPolicy:
+  port: 53
+
+roleBinding:
+  subjects:
+    kind: ServiceAccount
+    name: default
+
+postgres:
+  appName: postgres
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: 15
+  port: 5432
+  env: 
+    - name: POSTGRES_DB
+      value: keycloakdb
+    - name: POSTGRES_USER
+      value: keycloak
+    - name: POSTGRES_PASSWORD
+      value: keycloakpass
+  volumeMounts:
+    name: pgdata
+    mountPath: /var/lib/postgresql/data
+  resources:
+    storage: 1Gi
+
+keycloak:
+  appName: keycloak
+  replicaCount: 2
+  image:
+    repository: quay.io/keycloak/keycloak
+    tag: latest
+  port: 8080
+  env: 
+    - name: KC_PROXY_HEADERS
+      value: "xforwarded"
+    - name: KC_HOSTNAME
+      value: https://lab-keycloak.test
+    - name: KC_HOSTNAME_ADMIN
+      value: https://lab-keycloak.test
+    - name: KC_DB
+      value: postgres
+    - name: KC_DB_URL_HOST
+      value: postgres-service
+    - name: KC_DB_URL_DATABASE
+      value: keycloakdb
+    - name: KC_DB_USERNAME
+      value: keycloak
+    - name: KC_DB_PASSWORD
+      value: keycloakpass
+    - name: KC_BOOTSTRAP_ADMIN_USERNAME
+      value: admin
+    - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+      value: admin
+
+

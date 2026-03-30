@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-app-ingress
+  namespace: {{ .Values.global.namespace }}
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  tls:
+  - hosts:
+    - lab-keycloak.test
+    secretName: keycloak-tls-secret
+  ingressClassName: traefik
+  rules:
+  - host: {{ .Values.global.domain }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{include "keycloak.fullname" . }}-service
+            port:
+              number: {{ .Values.keycloak.port }}

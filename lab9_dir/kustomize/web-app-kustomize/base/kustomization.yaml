@@ -1,0 +1,12 @@
+resources:
+- namespace.yaml
+- postgres-statefulset.yaml
+- keycloak-deployment.yaml
+- ingress.yaml
+- network-policies.yaml
+
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: kustomize
+    includeSelectors: true
+    includeTemplates: true
