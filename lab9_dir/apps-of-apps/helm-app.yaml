@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://gitlab.com/nurkhanz1/DevOps2.git
     targetRevision: HEAD
-    path: chart/lab-chart
+    path: lab9_dir/chart/lab-chart
     helm:
       valueFiles:
         - ../../helm-app/local.yaml
