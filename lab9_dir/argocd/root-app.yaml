@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://gitlab.com/NurkhanZ/DevOps2.git
     targetRevision: HEAD
-    path: apps-of-apps
+    path: lab9_dir/apps-of-apps
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
