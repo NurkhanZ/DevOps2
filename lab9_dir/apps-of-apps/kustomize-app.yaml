@@ -6,7 +6,7 @@ metadata:
 spec:
   project: defaut
   source:
-    repoURL: https://gitlab.com/NurkhanZ/DevOps2.git
+    repoURL: https://gitlab.com/nurkhanz1/DevOps2.git
     targetRevision: HEAD
     path: kustomize/web-app-kustomize/overlays/local
   destination:
