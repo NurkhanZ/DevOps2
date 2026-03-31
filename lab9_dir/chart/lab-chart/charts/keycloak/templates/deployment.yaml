@@ -20,11 +20,7 @@ spec:
         image: {{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}
         ports:
         - containerPort: {{ .Values.keycloak.port }}
-        args:
-    		- start
-    		- --http-enabled=true
-    		- --hostname-strict=false
-    		- --verbose
+        args: [‘start’, ‘--http-enabled=true’, ‘—hostname-strict=false’, --verbose‘] 
         env:
           {{- range .Values.keycloak.env }}
         - name: {{ .name }}
