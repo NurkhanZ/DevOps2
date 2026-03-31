@@ -1,7 +1,7 @@
 ﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "keycloak.fullname" . }} 
+  name: {{ include "keycloak.fullname" . }}
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "keycloak.labels" . | nindent 4 }}
@@ -20,14 +20,13 @@ spec:
         image: {{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}
         ports:
         - containerPort: {{ .Values.keycloak.port }}
-        args: 
-	  - "start" 
-	  - "—http-enabled=true"
-	  - "--hostname-strict=false" 
-	  - "--verbose"
+        args:
+          - "start"
+          - "--http-enabled=true"
+          - "--hostname-strict=false"
+          - "--verbose"
         env:
-          {{- range .Values.keycloak.env }}
-        - name: {{ .name }}
-          value: {{ .value | quote }}
-          {{- end }}
-
+{{- range .Values.keycloak.env }}
+          - name: {{ .name }}
+            value: {{ .value | quote }}
+{{- end }}
