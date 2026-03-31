@@ -1,4 +1,4 @@
-global:
+﻿global:
   domain: lab-keycloak.test
   namespace: web-app
 
@@ -19,7 +19,7 @@ postgres:
   port: 5432
   env: 
     - name: POSTGRES_DB
-      value: keycloak
+      value: keycloakdb
     - name: POSTGRES_USER
       value: keycloak
     - name: POSTGRES_PASSWORD
