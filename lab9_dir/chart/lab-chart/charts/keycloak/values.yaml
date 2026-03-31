@@ -28,7 +28,7 @@ keycloak:
       value: postgres
     - name: KC_DB_URL_HOST
       value: helm-app-postgres-service
-    - name: KC_DB_URL_DB
+    - name: KC_DB_URL_DATABASE
       value: keycloakdb
     - name: KC_DB_USERNAME
       value: keycloak
