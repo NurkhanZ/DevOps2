@@ -19,7 +19,7 @@ postgres:
   port: 5432
   env: 
     - name: POSTGRES_DB
-      value: keycloakdb
+      value: keycloak
     - name: POSTGRES_USER
       value: keycloak
     - name: POSTGRES_PASSWORD
