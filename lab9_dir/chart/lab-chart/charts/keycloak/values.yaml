@@ -28,8 +28,8 @@ keycloak:
       value: postgres
     - name: KC_DB_URL_HOST
       value: helm-app-postgres-service
-    - name: KC_DB_URL_DATABASE
-      value: keycloakdb
+    - name: KC_DB_URL
+      value: "jdbc:postgresql://helm-app-postgres-service:5432/keycloakdb?sslmode=disable"
     - name: KC_DB_USERNAME
       value: keycloak
     - name: KC_DB_PASSWORD
