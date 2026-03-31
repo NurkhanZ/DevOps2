@@ -12,7 +12,7 @@ roleBinding:
 
 keycloak:
   appName: keycloak
-  replicaCount: 3
+  replicaCount: 1
   image:
     repository: quay.io/keycloak/keycloak
     tag: latest
