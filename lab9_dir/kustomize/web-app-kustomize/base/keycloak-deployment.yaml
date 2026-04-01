@@ -32,10 +32,9 @@ spec:
   
         - name: KC_DB
           value: postgres
-        - name: KC_DB_URL_HOST
-          value: postgres-service
-        - name: KC_DB_URL_DATABASE
-          value: keycloak
+        - name: KC_DB_URL
+          value: >- 
+            jdbc:postgresql://helm-app-postgres-service:5432/keycloak?sslmode=disable
         - name: KC_DB_USERNAME
           value: keycloak
         - name: KC_DB_PASSWORD
