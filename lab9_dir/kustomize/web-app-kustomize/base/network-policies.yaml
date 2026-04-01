@@ -47,7 +47,7 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          name: traefik
+          name: web-app
     ports:
     - protocol: TCP
       port: 8080
