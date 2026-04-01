@@ -56,7 +56,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-ingress-to-traefik
-  namespace: load-balancer
+  namespace: {{ .Values.global.namespace }}
 spec:
   podSelector:
     matchLabels:
