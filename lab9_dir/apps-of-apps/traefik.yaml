@@ -9,6 +9,13 @@ spec:
     repoURL: 'https://helm.traefik.io/traefik'
     targetRevision: '*'
     chart: traefik
+    helm:
+      values: |
+        providers:
+          kubernetesIngress:
+            publishedService:
+              enabled: true
+              path: "web-app/traefik"
   destination:
     server: 'https://kubernetes.default.svc' 
     namespace: web-app
