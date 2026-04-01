@@ -11,6 +11,6 @@ spec:
     path: lab9_dir/kustomize/web-app-kustomize/overlays/local
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: web-app
   syncPolicy:
     automated: {}
