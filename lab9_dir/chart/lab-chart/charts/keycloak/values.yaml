@@ -38,5 +38,8 @@ keycloak:
       value: admin
     - name: KC_BOOTSTRAP_ADMIN_PASSWORD
       value: admin
-
+    - name: KC_DB_POOL_INITIAL_SIZE
+      value: "5"
+    - name: KC_DB_POOL_MAX_SIZE
+      value: "10"
 
