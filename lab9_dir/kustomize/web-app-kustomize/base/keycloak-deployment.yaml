@@ -50,6 +50,8 @@ kind: Service
 metadata:
   name: keycloak-service
   namespace: web-app-k
+  labels:
+    app: keycloak
 spec:
   selector:
     app: keycloak
