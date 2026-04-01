@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny-all
-  namespace: web-app
+  namespace: web-app-k
 spec:
   podSelector: {}
   policyTypes:
@@ -13,7 +13,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-dns
-  namespace: web-app
+  namespace: web-app-k
 spec:
   podSelector: {}
   policyTypes:
@@ -29,12 +29,14 @@ spec:
     ports:
     - protocol: UDP
       port: 53
+    - protocol: TCP
+      port: 53
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-traefik-to-keycloak
-  namespace: web-app
+  namespace: web-app-k
 spec:
   podSelector:
     matchLabels:
@@ -54,7 +56,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-keycloak-to-postgres
-  namespace: web-app
+  namespace: web-app-k
 spec:
   podSelector:
     matchLabels:
@@ -74,7 +76,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-keycloak-egress
-  namespace: web-app
+  namespace: web-app-k
 spec:
   podSelector:
     matchLabels:

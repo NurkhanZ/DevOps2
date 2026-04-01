@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres-headless-service
-  namespace: web-app
+  namespace: web-app-k
   labels:
     app: postgres
 spec:
@@ -17,7 +17,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres-service
-  namespace: web-app
+  namespace: web-app-k
   labels:
     app: postgres
 spec:
@@ -31,7 +31,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres-statefulset
-  namespace: web-app
+  namespace: web-app-k
   labels:
     app: postgres
 spec:
@@ -52,7 +52,7 @@ spec:
         - containerPort: 5432
         env:
           - name: POSTGRES_DB
-            value: keycloakdb
+            value: keycloak
           - name: POSTGRES_USER
             value: keycloak
           - name: POSTGRES_PASSWORD
