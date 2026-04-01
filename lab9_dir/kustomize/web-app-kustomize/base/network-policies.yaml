@@ -100,9 +100,9 @@ spec:
   - Ingress
   ingress:
   - from:
-    - namespaceSelector:
+    - podSelector:
         matchLabels:
-          name: web-app
+          app.kubernetes.io/name: traefik
     ports:
     - protocol: TCP
       port: 8080
