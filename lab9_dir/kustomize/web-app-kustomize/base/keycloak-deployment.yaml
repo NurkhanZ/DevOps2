@@ -26,9 +26,9 @@ spec:
           value: "xforwarded"
     
         - name: KC_HOSTNAME
-          value: https://lab-keycloak.test
+          value: https://lab-keycloak-k.test
         - name: KC_HOSTNAME_ADMIN
-          value: https://lab-keycloak.test
+          value: https://lab-keycloak-k.test
   
         - name: KC_DB
           value: postgres

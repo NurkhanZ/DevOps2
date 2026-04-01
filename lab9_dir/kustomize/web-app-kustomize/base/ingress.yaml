@@ -13,7 +13,7 @@ spec:
     secretName: keycloak-tls-secret
   ingressClassName: traefik
   rules:
-  - host: lab-keycloak.test
+  - host: lab-keycloak-k.test
     http:
       paths:
       - path: /
