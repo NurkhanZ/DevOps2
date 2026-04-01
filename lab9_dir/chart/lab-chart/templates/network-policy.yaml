@@ -50,6 +50,28 @@ spec:
     ports:
     - protocol: TCP
       port: 443
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-traefik
+  namespace: load-balancer
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: traefik
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0 
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -66,7 +88,7 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          name: load-balancer
+          name: web-app
     ports:
     - protocol: TCP
       port: {{ .Values.keycloak.port }}
