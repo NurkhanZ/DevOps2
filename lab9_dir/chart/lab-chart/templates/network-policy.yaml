@@ -28,7 +28,9 @@ spec:
           k8s-app: kube-dns
     ports:
     - protocol: UDP
-      port: {{ .Values.networkPolicy.port}}
+      port: {{ .Values.networkPolicy.port }}
+    - protocol: TCP
+      port: {{ .Values.networkPolicy.port }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -38,7 +40,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: {{ .Values.keycloak.appName }}
+      app.kubernetes.io/name: {{ .Values.keycloak.appName }}
   policyTypes:
   - Ingress
   ingress:
@@ -58,14 +60,14 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: {{ .Values.postgres.appName }}
+      app.kubernetes.io/name: {{ .Values.postgres.appName }}
   policyTypes:
   - Ingress
   ingress:
   - from:
     - podSelector:
         matchLabels:
-          app: {{ .Values.keycloak.appName }}
+          app.kubernetes.io/name: {{ .Values.keycloak.appName }}
     ports:
     - protocol: TCP
       port: {{ .Values.postgres.port }}
@@ -78,14 +80,14 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: {{ .Values.keycloak.appName }}
+      app.kubernetes.io/name: {{ .Values.keycloak.appName }}
   policyTypes:
   - Egress
   egress:
   - to:
     - podSelector:
         matchLabels:
-          app: {{ .Values.postgres.appName }}
+          app.kubernetes.io/name: {{ .Values.postgres.appName }}
     ports:
     - protocol: TCP
       port: {{ .Values.postgres.port }}
