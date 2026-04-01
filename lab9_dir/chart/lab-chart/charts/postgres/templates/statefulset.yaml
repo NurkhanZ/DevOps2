@@ -22,10 +22,21 @@ spec:
         ports:
         - containerPort: {{ .Values.postgres.port }}
         env:
-          {{- range .Values.postgres.env }}
-          - name: {{ .name }}
-            value: {{ .value }}
-          {{- end }}
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: POSTGRES_DB
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: POSTGRES_PASSWORD
         volumeMounts:
         - name: {{ .Values.postgres.volumeMounts.name }}
           mountPath: {{ .Values.postgres.volumeMounts.mountPath }}

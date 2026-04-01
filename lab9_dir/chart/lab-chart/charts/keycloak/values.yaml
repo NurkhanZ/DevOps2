@@ -17,34 +17,3 @@ keycloak:
     repository: quay.io/keycloak/keycloak
     tag: latest
   port: 8080
-  env: 
-    - name: KC_PROXY_HEADERS
-      value: "xforwarded"
-    - name: KC_HOSTNAME
-      value: "https://lab-keycloak.test"
-    - name: KC_HOSTNAME_ADMIN
-      value: "https://lab-keycloak.test"
-    - name: KC_DB
-      value: "postgres"
-    - name: KC_DB_URL
-      value: "jdbc:postgresql://helm-app-postgres-service:5432/keycloakdb?sslmode=disable"
-    - name: KC_DB_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: web-app-credentials
-          key: POSTGRES_USER
-    - name: KC_DB_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: web-app-credentials
-          key: POSTGRES_PASSWORD
-    - name: KC_BOOTSTRAP_ADMIN_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: web-app-credentials
-          key: KC_BOOTSTRAP_ADMIN_USERNAME
-    - name: KC_BOOTSTRAP_ADMIN_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: web-app-credentials
-          key: KC_BOOTSTRAP_ADMIN_PASSWORD
