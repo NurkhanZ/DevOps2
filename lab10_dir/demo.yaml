@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: power-pvc
+spec:
+  storageClassName: longhorn
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 200Mi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: power-app
+spec:
+  containers:
+  - name: node-js
+    image: alpine
+    command: ["/bin/sh", "-c", "while true; do date >> /data/uptime.log; sleep 1; done"]
+    volumeMounts:
+    - name: storage
+      mountPath: /data
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: power-pvc
