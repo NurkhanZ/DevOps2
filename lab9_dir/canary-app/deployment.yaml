@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: canary-demo
+  namespace: web-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: canary-demo
+  template:
+    metadata:
+      labels:
+        app: canary-demo
+    spec:
+      containers:
+      - name: traefik-whoami
+        image: traefik/whoami:v1.9.0
+        ports:
+        - containerPort: 80
+  strategy:
+    canary:
+      steps:
+      - setWeight: 25
+      - pause: { duration: 15s }
+      - setWeight: 50
+      - pause: { duration: 15s }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary-active
+  namespace: web-app
+spec:
+  type: LoadBalancer
+  ports: 
+  - port: 80
+    targetPort: 80
+  selector:
+    app: canary-demo

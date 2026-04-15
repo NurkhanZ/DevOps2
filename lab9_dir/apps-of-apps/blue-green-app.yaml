@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blue-green-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gitlab.com/nurkhanz1/DevOps2.git
+    path: lab9_dir/blue-green-app
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: web-app
+  syncPolicy:
+    automated: {}
