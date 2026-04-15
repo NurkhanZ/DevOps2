@@ -27,6 +27,9 @@ spec:
       activeService: blue-green-active
       previewService: blue-green-preview
       autoPromotionEnabled: false
+      prePromotionAnalysis:
+        templates:
+        - templateName: simulate-failure-test
 ---
 apiVersion: v1
 kind: Service
