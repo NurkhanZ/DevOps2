@@ -9,4 +9,13 @@ spec:
     kind: Rollout
     name: canary-demo
   updatePolicy:
-    updateMode: "Off"
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: 10m
+          memory: 25Mi
+        maxAllowed:
+          cpu: 1
+          memory: 512Mi
