@@ -4,7 +4,6 @@ metadata:
   name: canary-demo
   namespace: web-app
 spec:
-  replicas: 4
   selector:
     matchLabels:
       app: canary-demo
@@ -18,6 +17,10 @@ spec:
         image: traefik/whoami:v1.9.0
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "32Mi"
   strategy:
     canary:
       steps:
