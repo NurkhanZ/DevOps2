@@ -26,7 +26,7 @@ spec:
 
       - analysis:
           templates:
-          - template: simulate-failure-test
+          - templateName: simulate-failure-test
 
       - setWeight: 50
       - pause: { duration: 15s }
