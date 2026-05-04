@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: TraefikService
+metadata:
+  name: traefik-canary-splitter
+  namespace: sso-system
+spec:
+  weighted:
+    services:
+      - name: keycloak-svc-stable
+        port: 8080
+        weight: 90
+      - name: keycloak-svc-canary
+        port: 8080
+        weight: 10

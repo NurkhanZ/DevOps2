@@ -1,6 +1,6 @@
 global:
-  domain: sso-service.test
-  namespace: sso-service
+  domain: sso-system.test
+  namespace: sso-system
 
 #TODO roleBinding
 

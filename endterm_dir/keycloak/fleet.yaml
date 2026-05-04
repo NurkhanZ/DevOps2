@@ -1,8 +1,8 @@
-defaultNamespace: sso-service
+defaultNamespace: sso-system
 
 helm:
   releaseName: keycloak
   values:
     database:
-      host: postgres-service.sso-service.svc.cluster.local
+      host: postgres-service.sso-system.svc.cluster.local
       user: sso_u
