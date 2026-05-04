@@ -1,0 +1,19 @@
+global:
+  domain: sso-service.test
+  namespace: sso-service
+
+#TODO roleBinding:
+
+postgres:
+  appName: postgres
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: 18
+  port: 5432
+  volumeMounts:
+    name: pgdata
+    mountPath: /var/lib/postgresql/data
+
+  resources:
+    storage: 1Gi
