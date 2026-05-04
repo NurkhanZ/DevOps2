@@ -1,8 +1,6 @@
 global:
-  domain: sso-service.test
-  namespace: sso-service
-
-#TODO roleBinding:
+  domain: sso-system.test
+  namespace: sso-system
 
 postgres:
   appName: postgres

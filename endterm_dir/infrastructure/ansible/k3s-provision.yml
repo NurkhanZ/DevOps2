@@ -1,0 +1,160 @@
+---
+- name: Common Setup (All Nodes)
+  hosts: k3s_cluster
+  become: yes
+  tasks:
+    - name: Disable swap immediately
+      command: swapoff -a
+
+    - name: Disable swap in fstab on reboot
+      shell: sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+    - name: Update apt cache and upgrade system packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install dependencies (K3s, Longhorn iSCSI/NFS)
+      apt:
+        name:
+          - curl
+          - git
+          - jq
+          - open-iscsi
+          - nfs-common
+        state: present
+
+    - name: Enable and start iSCSI daemon
+      systemd:
+        name: iscsid
+        enabled: yes
+        state: started
+
+    - name: Load iscsi_tcp kernel module for Longhorn
+      modprobe:
+        name: iscsi_tcp
+        state: present
+
+    - name: Load dm_crypt kernel module for Longhorn
+      modprobe:
+        name: dm_crypt
+        state: present
+
+- name: Provision K3s Control Plane
+  hosts: k3s_servers
+  become: yes
+  tasks:
+    - name: Download and install K3s Server
+      shell: |
+        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
+          --flannel-backend=none \
+          --disable-network-policy \
+          --kubelet-arg=system-reserved=cpu=250m,memory=512Mi,ephemeral-storage=1Gi \
+          --kubelet-arg=kube-reserved=cpu=250m,memory=512Mi,ephemeral-storage=1Gi \
+          --kubelet-arg=eviction-hard=memory.available<256Mi,nodefs.available<10%" \
+          sh -s -- --write-kubeconfig-mode 644
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Wait for node to register (might be NotReady without CNI)
+      command: k3s kubectl get nodes
+      register: nodes
+      until: nodes.stdout_lines | length > 1
+      retries: 20
+      delay: 5
+
+    - name: Extract node token
+      command: cat /var/lib/rancher/k3s/server/node-token
+      register: node_token
+      changed_when: false
+
+    - name: Store server IP and node token as facts
+      set_fact:
+        k3s_token: "{{ node_token.stdout }}"
+        k3s_server_ip: "{{ ansible_host | default(inventory_hostname) }}"
+
+- name: Provision K3s Agents
+  hosts: k3s_agents
+  become: yes
+  tasks:
+    - name: Download and install K3s Agent
+      shell: |
+        curl -sfL https://get.k3s.io | K3S_URL=https://{{ hostvars[groups['k3s_servers'][0]]['k3s_server_ip'] }}:6443 \
+          K3S_TOKEN="{{ hostvars[groups['k3s_servers'][0]]['k3s_token'] | trim }}" \
+          INSTALL_K3S_EXEC="agent \
+          --kubelet-arg=system-reserved=cpu=250m,memory=256Mi \
+          --kubelet-arg=kube-reserved=cpu=250m,memory=256Mi \
+          --kubelet-arg=eviction-hard=memory.available<256Mi,nodefs.available<10%" \
+          sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+- name: Post-Provisioning (Helm, Calico, Longhorn, Cert-Manager, Rancher, Fleet)
+  hosts: k3s_servers[0]
+  become: yes
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  tasks:
+    - name: Wait for agents to register
+      command: k3s kubectl get nodes
+      register: nodes
+      until: "groups['k3s_agents'] | length + 1 == nodes.stdout_lines | length - 1"
+      retries: 20
+      delay: 10
+      ignore_errors: true
+
+    - name: Install Helm
+      shell: curl -sfL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Install Calico
+      shell: |
+        helm repo add projectcalico https://docs.tigera.io/calico/charts
+        helm repo update
+        helm upgrade --install calico projectcalico/tigera-operator --version v3.27.0 --namespace kube-system
+
+    - name: Install Sealed Secrets Controller
+      shell: |
+        helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
+        helm repo update
+        helm upgrade --install sealed-secrets sealed-secrets/sealed-secrets --namespace kube-system --set fullnameOverride=sealed-secrets-controller
+
+    - name: Install Metacontroller
+      shell: kubectl apply -k https://github.com/metacontroller/metacontroller/manifests/production
+
+    - name: Wait for nodes to become Ready after CNI installation
+      command: k3s kubectl get nodes
+      register: nodes_ready
+      until: "'NotReady' not in nodes_ready.stdout"
+      retries: 20
+      delay: 10
+      ignore_errors: true
+
+    - name: Install Longhorn
+      shell: |
+        helm repo add longhorn https://charts.longhorn.io
+        helm repo update
+        helm upgrade --install longhorn longhorn/longhorn --namespace longhorn-system --create-namespace
+
+    - name: Install Cert-Manager
+      shell: |
+        helm repo add jetstack https://charts.jetstack.io
+        helm repo update
+        helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
+
+    - name: Install Rancher UI
+      shell: |
+        helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+        helm repo update
+        helm upgrade --install rancher rancher-stable/rancher \
+          --namespace cattle-system \
+          --create-namespace \
+          --set hostname=rancher.enterprise.local \
+          --set bootstrapPassword=secure-admin-password \
+          --set replicas=1 \
+          --set resources.requests.memory="512Mi" \
+          --set resources.limits.memory="1024Mi" \
+          --set global.cattle.psp.enabled=false
+
+

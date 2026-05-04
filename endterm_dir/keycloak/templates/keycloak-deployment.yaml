@@ -1,31 +1,17 @@
-﻿apiVersion: v1
-kind: Service
-metadata:
-  name: keycloak-service
-  namespace: sso-system
-spec:
-  selector:
-    app: keycloak
-  ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
-  type: ClusterIP
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: keycloak
-  namespace: sso-system
+  name: keycloak-stable
+  namespace: {{ .Values.global.namespace }}
 spec:
-  replicas: 2
+  replicas: {{ .Values.keycloak.replicaCount }}
   selector:
     matchLabels:
-      app: keycloak
+      app: keycloak-stable
   template:
     metadata:
       labels:
-        app: keycloak
+        app: keycloak-stable
     spec:
       affinity:
         podAntiAffinity:
@@ -35,7 +21,7 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - keycloak
+                      - keycloak-stable
               topologyKey: "kubernetes.io/hostname"
       securityContext:
         runAsUser: 1000
@@ -44,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:24.0.4
+          image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"
           args: ["start"]
           resources:
             requests:
@@ -64,7 +50,7 @@ spec:
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
-              value: jdbc:postgresql://postgres-service-headless.sso-system.svc.cluster.local:5432/keycloak
+              value: jdbc:postgresql://postgres-service-headless.{{ .Values.global.namespace }}.svc.cluster.local:5432/keycloak
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -78,7 +64,7 @@ spec:
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
             - name: KC_HOSTNAME
-              value: "sso.enterprise.local"
+              value: "{{ .Values.global.domain }}"
             - name: KC_CACHE
               value: "ispn"
             - name: KEYCLOAK_ADMIN
@@ -104,3 +90,98 @@ spec:
               port: 8080
             initialDelaySeconds: 30
             periodSeconds: 15
+{{- if .Values.keycloak.canary.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak-canary
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: {{ .Values.keycloak.canary.replicaCount }}
+  selector:
+    matchLabels:
+      app: keycloak-canary
+  template:
+    metadata:
+      labels:
+        app: keycloak-canary
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - keycloak-canary
+              topologyKey: "kubernetes.io/hostname"
+      securityContext:
+        runAsUser: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: keycloak
+          image: "{{ .Values.keycloak.canary.image.repository }}:{{ .Values.keycloak.canary.image.tag }}"
+          args: ["start"]
+          resources:
+            requests:
+              cpu: "300m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: JAVA_OPTS_APPEND
+              value: "-Djava.net.preferIPv4Stack=true -XX:MaxRAMPercentage=75.0"
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres-service-headless.{{ .Values.global.namespace }}.svc.cluster.local:5432/keycloak
+            - name: KC_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sso-credentials
+                  key: POSTGRES_USER
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sso-credentials
+                  key: POSTGRES_PASSWORD
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"
+            - name: KC_HOSTNAME
+              value: "{{ .Values.global.domain }}"
+            - name: KC_CACHE
+              value: "ispn"
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: sso-credentials
+                  key: KEYCLOAK_ADMIN
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sso-credentials
+                  key: KEYCLOAK_ADMIN_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+{{- end }}

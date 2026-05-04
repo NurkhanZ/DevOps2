@@ -38,14 +38,16 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: postgresql
+      app: postgres
   policyTypes:
   - Ingress
   ingress:
   - from:
     - podSelector:
-        matchLabels:
-          app: keycloak
+        matchExpressions:
+          - key: app
+            operator: In
+            values: ["keycloak-stable", "keycloak-canary"]
     ports:
     - protocol: TCP
       port: 5432
@@ -58,8 +60,10 @@ metadata:
   namespace: {{ .Values.global.namespace }}
 spec:
   podSelector:
-    matchLabels:
-      app: keycloak
+    matchExpressions:
+      - key: app
+        operator: In
+        values: ["keycloak-stable", "keycloak-canary"]
   policyTypes:
   - Ingress
   ingress:

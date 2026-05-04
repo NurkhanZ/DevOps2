@@ -1,0 +1,13 @@
+kind: GitRepo
+apiVersion: fleet.cattle.io/v1alpha1
+metadata:
+  name: sso-stack
+  namespace: fleet-default
+spec:
+  # Replace with your actual git repository URL
+  repo: https://github.com/your-org/sso-stack.git
+  branch: main
+  paths:
+    - config
+    - postgres
+    - keycloak

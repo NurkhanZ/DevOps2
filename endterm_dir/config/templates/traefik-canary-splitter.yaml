@@ -2,7 +2,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: TraefikService
 metadata:
   name: traefik-canary-splitter
-  namespace: sso-system
+  namespace: {{ .Values.global.namespace }}
 spec:
   weighted:
     services:

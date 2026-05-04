@@ -2,8 +2,6 @@ global:
   domain: sso-system.test
   namespace: sso-system
 
-#TODO roleBinding
-
 keycloak:
   appName: keycloak
   replicaCount: 1
@@ -11,3 +9,9 @@ keycloak:
     repository: quay.io/keycloak/keycloak
     tag: 26.6.1
   port: 8080
+  canary:
+    enabled: false
+    replicaCount: 1
+    image:
+      repository: quay.io/keycloak/keycloak
+      tag: 26.6.1

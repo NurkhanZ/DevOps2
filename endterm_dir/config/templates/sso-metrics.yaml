@@ -1,0 +1,24 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMSingle
+metadata:
+  name: sso-metrics-db
+  namespace: {{ .Values.global.namespace }}
+spec:
+  retentionPeriod: "14"
+  replicaCount: 1
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: "longhorn-sso-optimized"
+        resources:
+          requests:
+            storage: 5Gi
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "150Mi"
+    limits:
+      cpu: "300m"
+      memory: "350Mi"

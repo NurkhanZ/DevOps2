@@ -1,2 +1,15 @@
 global:
+  domain: sso-system.test
   namespace: sso-system
+
+sealedSecrets:
+  enabled: true
+  ssoCredentials:
+    POSTGRES_USER: "<encrypted-string-here>"
+    POSTGRES_PASSWORD: "<encrypted-string-here>"
+    KEYCLOAK_ADMIN: "<encrypted-string-here>"
+    KEYCLOAK_ADMIN_PASSWORD: "<encrypted-string-here>"
+  longhornS3:
+    AWS_ACCESS_KEY_ID: "<encrypted-string-here>"
+    AWS_SECRET_ACCESS_KEY: "<encrypted-string-here>"
+    AWS_ENDPOINTS: "<encrypted-string-here>"

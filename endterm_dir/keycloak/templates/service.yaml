@@ -1,12 +1,29 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "keycloak.fullname" . }}-service
+  name: keycloak-svc-stable
   namespace: {{ .Values.global.namespace }}
-  labels: {{- include "keycloak.labels" . | nindent 4}}
+  labels:
+    app: keycloak-stable
 spec:
   selector:
-    {{- include "keycloak.selectorLabels" . | nindent 4 }}
+    app: keycloak-stable
   ports:
   - port: {{ .Values.keycloak.port }}
     targetPort: {{ .Values.keycloak.port }}
+{{- if .Values.keycloak.canary.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-svc-canary
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: keycloak-canary
+spec:
+  selector:
+    app: keycloak-canary
+  ports:
+  - port: {{ .Values.keycloak.port }}
+    targetPort: {{ .Values.keycloak.port }}
+{{- end }}
