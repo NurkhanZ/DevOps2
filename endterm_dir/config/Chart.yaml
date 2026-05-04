@@ -1,0 +1,5 @@
+iapiVersion: v2
+name: sso-chart-configuration
+description: A Helm chart for SSO system configuration
+type: application
+version: 0.0.1

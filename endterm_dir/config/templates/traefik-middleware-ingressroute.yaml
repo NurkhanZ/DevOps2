@@ -1,0 +1,28 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: traefik-keycloak-forward-headers
+  namespace: sso-system
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-keycloak-ingress
+  namespace: sso-system
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    secretName: sso-tls-secret
+  routes:
+    - match: Host(`sso.enterprise.local`)
+      kind: Rule
+      services:
+        - name: keycloak-svc
+          port: 8080
+      middlewares:
+        - name: keycloak-forward-headers
