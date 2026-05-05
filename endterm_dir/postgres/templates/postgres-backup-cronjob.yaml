@@ -1,0 +1,96 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  namespace: {{ .Values.global.namespace }}
+spec:
+  schedule: "0 2 * * *" # Runs daily at 2:00 AM
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          initContainers:
+            - name: pg-dump-snapshot
+              image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+              resources:
+                requests:
+                  memory: "64Mi"
+                limits:
+                  memory: "128Mi"
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "Taking logical snapshot..."
+                  # We use pg_dump to create a compressed custom-format dump
+                  pg_dump -h postgres-service-headless -U keycloak -d keycloak -F c -f /snapshots/backup-$(date +\%Y\%m\%d\%H\%M\%S).dump
+                  
+                  echo "Cleaning up old snapshots (keeping last 7 days)..."
+                  find /snapshots -name "*.dump" -type f -mtime +7 -exec rm {} \;
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-credentials
+                      key: POSTGRES_PASSWORD
+              volumeMounts:
+                - name: snapshots-volume
+                  mountPath: /snapshots
+          containers:
+            - name: s3-upload
+              image: amazon/aws-cli:latest
+              resources:
+                requests:
+                  memory: "64Mi"
+                limits:
+                  memory: "128Mi"
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  LATEST_BACKUP=$(ls -t /snapshots/*.dump | head -n 1)
+                  if [ -z "$LATEST_BACKUP" ]; then
+                    echo "No backup found to upload!"
+                    exit 1
+                  fi
+                  echo "Uploading $LATEST_BACKUP to S3..."
+                  
+                  # The endpoint-url is optional for AWS, but mandatory for MinIO/DigitalOcean
+                  aws s3 cp $LATEST_BACKUP $S3_BUCKET/$(basename $LATEST_BACKUP) --endpoint-url $S3_ENDPOINT --region $S3_REGION
+                  echo "Backup complete!"
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-s3-backup-credentials
+                      key: AWS_ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-s3-backup-credentials
+                      key: AWS_SECRET_ACCESS_KEY
+                - name: S3_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-s3-backup-credentials
+                      key: S3_BUCKET
+                - name: S3_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-s3-backup-credentials
+                      key: S3_REGION
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-s3-backup-credentials
+                      key: S3_ENDPOINT
+              volumeMounts:
+                - name: snapshots-volume
+                  mountPath: /snapshots
+          volumes:
+            - name: snapshots-volume
+              persistentVolumeClaim:
+                claimName: postgres-snapshots

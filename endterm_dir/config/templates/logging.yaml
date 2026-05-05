@@ -54,11 +54,11 @@ spec:
         - containerPort: 3100
         resources:
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 50m
+            memory: 64Mi
           limits:
-            cpu: 300m
-            memory: 256Mi
+            cpu: 200m
+            memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -107,11 +107,11 @@ spec:
           mountPath: /etc/promtail
         resources:
           requests:
-            cpu: 50m
-            memory: 64Mi
+            cpu: 20m
+            memory: 32Mi
           limits:
             cpu: 100m
-            memory: 128Mi
+            memory: 64Mi
       volumes:
       - name: logs
         hostPath:

@@ -25,11 +25,11 @@ spec:
           image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
           resources:
             requests:
-              cpu: "250m"
-              memory: "256Mi"
+              cpu: "100m"
+              memory: "128Mi"
             limits:
               cpu: "500m"
-              memory: "512Mi"
+              memory: "256Mi"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -74,12 +74,10 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: pg-data
-        labels:
-          recurring-job-group.longhorn.io/production-postgres: enabled
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: "longhorn-sso-optimized"
+        storageClassName: "local-path"
         resources:
           requests:
             storage: {{ .Values.postgres.resources.storage }}

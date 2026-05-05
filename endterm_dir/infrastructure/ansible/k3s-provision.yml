@@ -14,30 +14,12 @@
         update_cache: yes
         upgrade: dist
 
-    - name: Install dependencies (K3s, Longhorn iSCSI/NFS)
+    - name: Install dependencies (K3s)
       apt:
         name:
           - curl
           - git
           - jq
-          - open-iscsi
-          - nfs-common
-        state: present
-
-    - name: Enable and start iSCSI daemon
-      systemd:
-        name: iscsid
-        enabled: yes
-        state: started
-
-    - name: Load iscsi_tcp kernel module for Longhorn
-      modprobe:
-        name: iscsi_tcp
-        state: present
-
-    - name: Load dm_crypt kernel module for Longhorn
-      modprobe:
-        name: dm_crypt
         state: present
 
 - name: Provision K3s Control Plane
@@ -49,8 +31,8 @@
         curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
           --flannel-backend=none \
           --disable-network-policy \
-          --kubelet-arg=system-reserved=cpu=250m,memory=512Mi,ephemeral-storage=1Gi \
-          --kubelet-arg=kube-reserved=cpu=250m,memory=512Mi,ephemeral-storage=1Gi \
+          --kubelet-arg=system-reserved=cpu=250m,memory=256Mi,ephemeral-storage=1Gi \
+          --kubelet-arg=kube-reserved=cpu=250m,memory=256Mi,ephemeral-storage=1Gi \
           --kubelet-arg=eviction-hard=memory.available<256Mi,nodefs.available<10%" \
           sh -s -- --write-kubeconfig-mode 644
       args:
@@ -71,7 +53,7 @@
     - name: Store server IP and node token as facts
       set_fact:
         k3s_token: "{{ node_token.stdout }}"
-        k3s_server_ip: "{{ ansible_host | default(inventory_hostname) }}"
+        k3s_server_ip: "{{ internal_ip | default(ansible_host) }}"
 
 - name: Provision K3s Agents
   hosts: k3s_agents
@@ -82,9 +64,9 @@
         curl -sfL https://get.k3s.io | K3S_URL=https://{{ hostvars[groups['k3s_servers'][0]]['k3s_server_ip'] }}:6443 \
           K3S_TOKEN="{{ hostvars[groups['k3s_servers'][0]]['k3s_token'] | trim }}" \
           INSTALL_K3S_EXEC="agent \
-          --kubelet-arg=system-reserved=cpu=250m,memory=256Mi \
-          --kubelet-arg=kube-reserved=cpu=250m,memory=256Mi \
-          --kubelet-arg=eviction-hard=memory.available<256Mi,nodefs.available<10%" \
+          --kubelet-arg=system-reserved=cpu=250m,memory=128Mi \
+          --kubelet-arg=kube-reserved=cpu=250m,memory=128Mi \
+          --kubelet-arg=eviction-hard=memory.available<128Mi,nodefs.available<10%" \
           sh -
       args:
         creates: /usr/local/bin/k3s
@@ -131,12 +113,6 @@
       delay: 10
       ignore_errors: true
 
-    - name: Install Longhorn
-      shell: |
-        helm repo add longhorn https://charts.longhorn.io
-        helm repo update
-        helm upgrade --install longhorn longhorn/longhorn --namespace longhorn-system --create-namespace
-
     - name: Install Cert-Manager
       shell: |
         helm repo add jetstack https://charts.jetstack.io
@@ -153,8 +129,8 @@
           --set hostname=rancher.enterprise.local \
           --set bootstrapPassword=secure-admin-password \
           --set replicas=1 \
-          --set resources.requests.memory="512Mi" \
-          --set resources.limits.memory="1024Mi" \
+          --set resources.requests.memory="768Mi" \
+          --set resources.limits.memory="1536Mi" \
           --set global.cattle.psp.enabled=false
 
 

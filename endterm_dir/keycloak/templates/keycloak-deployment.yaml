@@ -35,10 +35,10 @@ spec:
           resources:
             requests:
               cpu: "300m"
-              memory: "512Mi"
+              memory: "256Mi"
             limits:
               cpu: "1000m"
-              memory: "1024Mi"
+              memory: "512Mi"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -46,7 +46,7 @@ spec:
                 - ALL
           env:
             - name: JAVA_OPTS_APPEND
-              value: "-Djava.net.preferIPv4Stack=true -XX:MaxRAMPercentage=75.0"
+              value: "-Djava.net.preferIPv4Stack=true -Xms128m -Xmx256m -XX:MaxMetaspaceSize=128m"
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
@@ -129,10 +129,10 @@ spec:
           resources:
             requests:
               cpu: "300m"
-              memory: "512Mi"
+              memory: "256Mi"
             limits:
               cpu: "1000m"
-              memory: "1024Mi"
+              memory: "512Mi"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -140,7 +140,7 @@ spec:
                 - ALL
           env:
             - name: JAVA_OPTS_APPEND
-              value: "-Djava.net.preferIPv4Stack=true -XX:MaxRAMPercentage=75.0"
+              value: "-Djava.net.preferIPv4Stack=true -Xms128m -Xmx256m -XX:MaxMetaspaceSize=128m"
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
