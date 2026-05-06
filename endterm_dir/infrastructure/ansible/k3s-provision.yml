@@ -125,6 +125,14 @@
         spec: {}
         EOF
 
+    - name: Install VictoriaMetrics Operator
+      shell: |
+        helm repo add vm https://victoriametrics.github.io/helm-charts/
+        helm repo update
+        helm upgrade --install vm-operator vm/victoria-metrics-operator \
+          --namespace kube-system \
+          --set admissionWebhooks.enabled=false
+
     - name: Install Sealed Secrets Controller
       shell: |
         helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
