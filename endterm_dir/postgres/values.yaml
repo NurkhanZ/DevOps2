@@ -7,7 +7,7 @@ postgres:
   replicaCount: 1
   image:
     repository: postgres
-    tag: 18
+    tag: "17"
   port: 5432
   volumeMounts:
     name: pgdata

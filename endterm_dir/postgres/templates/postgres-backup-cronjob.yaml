@@ -26,7 +26,7 @@ spec:
                 - |
                   echo "Taking logical snapshot..."
                   # We use pg_dump to create a compressed custom-format dump
-                  pg_dump -h postgres-service-headless -U keycloak -d keycloak -F c -f /snapshots/backup-$(date +\%Y\%m\%d\%H\%M\%S).dump
+                  pg_dump -h postgres-service-headless -U $PGUSER -d keycloak -F c -f /snapshots/backup-$(date +\%Y\%m\%d\%H\%M\%S).dump
                   
                   echo "Cleaning up old snapshots (keeping last 7 days)..."
                   find /snapshots -name "*.dump" -type f -mtime +7 -exec rm {} \;
@@ -36,6 +36,11 @@ spec:
                     secretKeyRef:
                       name: sso-credentials
                       key: POSTGRES_PASSWORD
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-credentials
+                      key: POSTGRES_USER
               volumeMounts:
                 - name: snapshots-volume
                   mountPath: /snapshots

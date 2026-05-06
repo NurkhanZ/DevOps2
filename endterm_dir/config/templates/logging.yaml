@@ -27,6 +27,7 @@ metadata:
   namespace: {{ .Values.global.namespace }}
 spec:
   replicas: 1
+  serviceName: loki-headless
   selector:
     matchLabels:
       app: loki
@@ -59,6 +60,18 @@ spec:
           limits:
             cpu: 200m
             memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki-headless
+  namespace: {{ .Values.global.namespace }}
+spec:
+  clusterIP: None
+  ports:
+  - port: 3100
+  selector:
+    app: loki
 ---
 apiVersion: v1
 kind: Service
