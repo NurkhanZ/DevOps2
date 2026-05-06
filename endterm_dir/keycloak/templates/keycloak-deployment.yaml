@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak-stable
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.keycloak.replicaCount }}
   selector:
@@ -50,7 +50,7 @@ spec:
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
-              value: jdbc:postgresql://postgres-service-headless.{{ .Values.global.namespace }}.svc.cluster.local:5432/keycloak
+              value: jdbc:postgresql://postgres-service-headless.{{ .Release.Namespace }}.svc.cluster.local:5432/keycloak
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -96,7 +96,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak-canary
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.keycloak.canary.replicaCount }}
   selector:
@@ -144,7 +144,7 @@ spec:
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
-              value: jdbc:postgresql://postgres-service-headless.{{ .Values.global.namespace }}.svc.cluster.local:5432/keycloak
+              value: jdbc:postgresql://postgres-service-headless.{{ .Release.Namespace }}.svc.cluster.local:5432/keycloak
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
