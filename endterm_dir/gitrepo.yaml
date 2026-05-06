@@ -1,10 +1,9 @@
 kind: GitRepo
 apiVersion: fleet.cattle.io/v1alpha1
 metadata:
-  name: sso-stack
+  name: sso-system
   namespace: fleet-local
 spec:
-  # Replace with your actual git repository URL
   repo: https://github.com/NurkhanZ/DevOps2.git
   branch: main
   paths:
