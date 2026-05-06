@@ -5,9 +5,11 @@ metadata:
   namespace: fleet-default
 spec:
   # Replace with your actual git repository URL
-  repo: https://github.com/your-org/sso-stack.git
+  repo: https://github.com/NurkhanZ/DevOps2.git
   branch: main
   paths:
     - config
     - postgres
     - keycloak
+  targets:
+    - clusterName: local
