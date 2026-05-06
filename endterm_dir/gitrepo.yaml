@@ -8,8 +8,8 @@ spec:
   repo: https://github.com/NurkhanZ/DevOps2.git
   branch: main
   paths:
-    - config
-    - postgres
-    - keycloak
+    - endterm_dir/config
+    - endterm_dir/postgres
+    - endterm_dir/keycloak
   targets:
     - clusterName: local
