@@ -108,14 +108,15 @@
           name: default
         spec:
           calicoNetwork:
+            bgp: Disabled
             ipPools:
             - blockSize: 26
               cidr: 10.42.0.0/16
-              encapsulation: VXLANCrossSubnet
+              encapsulation: VXLAN
               natOutgoing: Enabled
               nodeSelector: all()
             nodeAddressAutodetectionV4:
-              interface: enp0s8.*
+              canReach: 192.168.100.3
         ---
         apiVersion: operator.tigera.io/v1
         kind: APIServer
