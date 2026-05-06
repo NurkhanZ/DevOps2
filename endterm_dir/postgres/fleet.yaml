@@ -1,5 +1,3 @@
 defaultNamespace: sso-system
 helm:
   releaseName: postgres
-  valuesFiles:
-    - values.yaml
