@@ -19,11 +19,10 @@ spec:
   tls:
     secretName: sso-tls-secret
   routes:
-    - match: Host(`{{ .Values.global.domain }}`)
+    - match: Host(`{{ .Values.global.domain }}`) && PathPrefix(`/`)
       kind: Rule
       services:
-        - name: traefik-canary-splitter
+        - name: keycloak-svc-stable
           port: 8080
-          kind: TraefikService
       middlewares:
         - name: traefik-keycloak-forward-headers
