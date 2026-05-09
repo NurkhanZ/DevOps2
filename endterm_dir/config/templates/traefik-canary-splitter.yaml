@@ -2,7 +2,7 @@ apiVersion: traefik.io/v1alpha1
 kind: TraefikService
 metadata:
   name: traefik-canary-splitter
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   weighted:
     services:
