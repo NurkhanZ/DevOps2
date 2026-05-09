@@ -85,12 +85,12 @@ spec:
               value: "https://{{ .Values.global.domain }}"
             - name: KC_CACHE
               value: "ispn"
-            - name: KEYCLOAK_ADMIN
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: sso-credentials
                   key: KEYCLOAK_ADMIN
-            - name: KEYCLOAK_ADMIN_PASSWORD
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: sso-credentials
@@ -98,15 +98,15 @@ spec:
           readinessProbe:
             httpGet:
               path: /health/ready
-              port: 8080
-            initialDelaySeconds: 30
+              port: 9000
+            initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health/live
-              port: 8080
-            initialDelaySeconds: 30
+              port: 9000
+            initialDelaySeconds: 60
             periodSeconds: 15
 {{- if .Values.keycloak.canary.enabled }}
 ---
@@ -187,12 +187,12 @@ spec:
               value: "true"
             - name: KC_CACHE
               value: "ispn"
-            - name: KEYCLOAK_ADMIN
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: sso-credentials
                   key: KEYCLOAK_ADMIN
-            - name: KEYCLOAK_ADMIN_PASSWORD
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: sso-credentials
@@ -200,14 +200,14 @@ spec:
           readinessProbe:
             httpGet:
               path: /health/ready
-              port: 8080
-            initialDelaySeconds: 30
+              port: 9000
+            initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health/live
-              port: 8080
-            initialDelaySeconds: 30
+              port: 9000
+            initialDelaySeconds: 60
             periodSeconds: 15
 {{- end }}
