@@ -24,5 +24,6 @@ spec:
       services:
         - name: traefik-canary-splitter
           port: 8080
+          kind: TraefikService
       middlewares:
         - name: traefik-keycloak-forward-headers
