@@ -100,3 +100,23 @@ spec:
     ports:
     - protocol: TCP
       port: 5432
+---
+# Allow Health Checks from the Kubelet
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-health-checks
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 9000

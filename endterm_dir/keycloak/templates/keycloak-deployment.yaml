@@ -36,13 +36,18 @@ spec:
             - "--http-enabled=true"
             - "--hostname-strict=false"
             - "--verbose"
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 9000
+              name: management
           resources:
             requests:
               cpu: "300m"
-              memory: "256Mi"
+              memory: "512Mi"
             limits:
               cpu: "1000m"
-              memory: "512Mi"
+              memory: "768Mi"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -148,13 +153,18 @@ spec:
             - "--http-enabled=true"
             - "--hostname-strict=false"
             - "--verbose"
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 9000
+              name: management
           resources:
             requests:
               cpu: "300m"
-              memory: "256Mi"
+              memory: "512Mi"
             limits:
               cpu: "1000m"
-              memory: "512Mi"
+              memory: "768Mi"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
