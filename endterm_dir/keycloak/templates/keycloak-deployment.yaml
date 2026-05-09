@@ -31,8 +31,11 @@ spec:
       containers:
         - name: keycloak
           image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"
-          command: ["/opt/keycloak/bin/kc.sh"]
-          args: ["start", "--http-enabled", "true", "--https-port", "-1", "--hostname-strict", "false", "--proxy", "edge"]
+          args:
+            - "start"
+            - "--http-enabled=true"
+            - "--hostname-strict=false"
+            - "--verbose"
           resources:
             requests:
               cpu: "300m"
@@ -51,7 +54,7 @@ spec:
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
-              value: jdbc:postgresql://postgres-service-headless.{{ .Release.Namespace }}.svc.cluster.local:5432/keycloak
+              value: jdbc:postgresql://postgres-service-headless.{{ .Release.Namespace }}.svc.cluster.local:5432/keycloak?sslmode=disable
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -62,14 +65,8 @@ spec:
                 secretKeyRef:
                   name: sso-credentials
                   key: POSTGRES_PASSWORD
-            - name: KC_PROXY
-              value: "edge"
             - name: KC_HTTP_ENABLED
               value: "true"
-            - name: KC_HTTPS_PORT
-              value: "-1"
-            - name: KC_STRICT_HTTPS
-              value: "false"
             - name: KC_HOSTNAME_STRICT
               value: "false"
             - name: KC_HOSTNAME_STRICT_HTTPS
@@ -83,7 +80,9 @@ spec:
             - name: KC_HEALTH_ENABLED
               value: "true"
             - name: KC_HOSTNAME
-              value: "{{ .Values.global.domain }}"
+              value: "https://{{ .Values.global.domain }}"
+            - name: KC_HOSTNAME_ADMIN
+              value: "https://{{ .Values.global.domain }}"
             - name: KC_CACHE
               value: "ispn"
             - name: KEYCLOAK_ADMIN
@@ -144,8 +143,11 @@ spec:
       containers:
         - name: keycloak
           image: "{{ .Values.keycloak.canary.image.repository }}:{{ .Values.keycloak.canary.image.tag }}"
-          command: ["/opt/keycloak/bin/kc.sh"]
-          args: ["start", "--http-enabled", "true", "--https-port", "-1", "--hostname-strict", "false", "--proxy", "edge"]
+          args:
+            - "start"
+            - "--http-enabled=true"
+            - "--hostname-strict=false"
+            - "--verbose"
           resources:
             requests:
               cpu: "300m"
@@ -164,7 +166,7 @@ spec:
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
-              value: jdbc:postgresql://postgres-service-headless.{{ .Release.Namespace }}.svc.cluster.local:5432/keycloak
+              value: jdbc:postgresql://postgres-service-headless.{{ .Release.Namespace }}.svc.cluster.local:5432/keycloak?sslmode=disable
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -175,26 +177,14 @@ spec:
                 secretKeyRef:
                   name: sso-credentials
                   key: POSTGRES_PASSWORD
-            - name: KC_PROXY
-              value: "edge"
-            - name: KC_HTTP_ENABLED
-              value: "true"
-            - name: KC_HTTPS_PORT
-              value: "-1"
-            - name: KC_HOSTNAME_STRICT
-              value: "false"
-            - name: KC_HOSTNAME_STRICT_HTTPS
-              value: "false"
-            - name: KC_HOSTNAME_URL
-              value: "https://{{ .Values.global.domain }}"
-            - name: KC_HOSTNAME_ADMIN_URL
-              value: "https://{{ .Values.global.domain }}"
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
+            - name: KC_HOSTNAME
+              value: "https://{{ .Values.global.domain }}"
+            - name: KC_HOSTNAME_ADMIN
+              value: "https://{{ .Values.global.domain }}"
             - name: KC_HEALTH_ENABLED
               value: "true"
-            - name: KC_HOSTNAME
-              value: "{{ .Values.global.domain }}"
             - name: KC_CACHE
               value: "ispn"
             - name: KEYCLOAK_ADMIN
