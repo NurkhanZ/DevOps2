@@ -31,7 +31,8 @@ spec:
       containers:
         - name: keycloak
           image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"
-          args: ["start", "--http-enabled=true"]
+          command: ["/opt/keycloak/bin/kc.sh"]
+          args: ["start", "--http-enabled", "true", "--https-port", "-1", "--hostname-strict", "false", "--proxy", "edge"]
           resources:
             requests:
               cpu: "300m"
@@ -65,6 +66,10 @@ spec:
               value: "edge"
             - name: KC_HTTP_ENABLED
               value: "true"
+            - name: KC_HTTPS_PORT
+              value: "-1"
+            - name: KC_STRICT_HTTPS
+              value: "false"
             - name: KC_HOSTNAME_STRICT
               value: "false"
             - name: KC_HOSTNAME_STRICT_HTTPS
@@ -139,7 +144,8 @@ spec:
       containers:
         - name: keycloak
           image: "{{ .Values.keycloak.canary.image.repository }}:{{ .Values.keycloak.canary.image.tag }}"
-          args: ["start", "--http-enabled=true"]
+          command: ["/opt/keycloak/bin/kc.sh"]
+          args: ["start", "--http-enabled", "true", "--https-port", "-1", "--hostname-strict", "false", "--proxy", "edge"]
           resources:
             requests:
               cpu: "300m"
@@ -173,6 +179,8 @@ spec:
               value: "edge"
             - name: KC_HTTP_ENABLED
               value: "true"
+            - name: KC_HTTPS_PORT
+              value: "-1"
             - name: KC_HOSTNAME_STRICT
               value: "false"
             - name: KC_HOSTNAME_STRICT_HTTPS
