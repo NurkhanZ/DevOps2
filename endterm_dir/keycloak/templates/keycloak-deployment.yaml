@@ -33,6 +33,7 @@ spec:
           image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"
           args:
             - "start"
+            - "--optimized"
             - "--http-enabled=true"
             - "--hostname-strict=false"
             - "--verbose"
@@ -47,7 +48,7 @@ spec:
               memory: "512Mi"
             limits:
               cpu: "1000m"
-              memory: "768Mi"
+              memory: "1Gi"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -100,18 +101,22 @@ spec:
                 secretKeyRef:
                   name: sso-credentials
                   key: KEYCLOAK_ADMIN_PASSWORD
+          startupProbe:
+            httpGet:
+              path: /health/ready
+              port: 9000
+            failureThreshold: 30
+            periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /health/ready
               port: 9000
-            initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health/live
               port: 9000
-            initialDelaySeconds: 60
             periodSeconds: 15
 {{- if .Values.keycloak.canary.enabled }}
 ---
@@ -150,6 +155,7 @@ spec:
           image: "{{ .Values.keycloak.canary.image.repository }}:{{ .Values.keycloak.canary.image.tag }}"
           args:
             - "start"
+            - "--optimized"
             - "--http-enabled=true"
             - "--hostname-strict=false"
             - "--verbose"
@@ -164,7 +170,7 @@ spec:
               memory: "512Mi"
             limits:
               cpu: "1000m"
-              memory: "768Mi"
+              memory: "1Gi"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -207,17 +213,21 @@ spec:
                 secretKeyRef:
                   name: sso-credentials
                   key: KEYCLOAK_ADMIN_PASSWORD
+          startupProbe:
+            httpGet:
+              path: /health/ready
+              port: 9000
+            failureThreshold: 30
+            periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /health/ready
               port: 9000
-            initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health/live
               port: 9000
-            initialDelaySeconds: 60
             periodSeconds: 15
 {{- end }}
