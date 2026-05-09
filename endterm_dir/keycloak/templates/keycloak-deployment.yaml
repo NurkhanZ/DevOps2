@@ -31,7 +31,7 @@ spec:
       containers:
         - name: keycloak
           image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"
-          args: ["start"]
+          args: ["start", "--optimized", "--http-enabled=true"]
           resources:
             requests:
               cpu: "300m"
@@ -61,6 +61,12 @@ spec:
                 secretKeyRef:
                   name: sso-credentials
                   key: POSTGRES_PASSWORD
+            - name: KC_PROXY
+              value: "edge"
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HOSTNAME_STRICT_HTTPS
+              value: "false"
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
             - name: KC_HOSTNAME
@@ -125,7 +131,7 @@ spec:
       containers:
         - name: keycloak
           image: "{{ .Values.keycloak.canary.image.repository }}:{{ .Values.keycloak.canary.image.tag }}"
-          args: ["start"]
+          args: ["start", "--optimized", "--http-enabled=true"]
           resources:
             requests:
               cpu: "300m"
@@ -155,6 +161,12 @@ spec:
                 secretKeyRef:
                   name: sso-credentials
                   key: POSTGRES_PASSWORD
+            - name: KC_PROXY
+              value: "edge"
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HOSTNAME_STRICT_HTTPS
+              value: "false"
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
             - name: KC_HOSTNAME
