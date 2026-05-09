@@ -33,7 +33,6 @@ spec:
           image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"
           args:
             - "start"
-            - "--optimized"
             - "--http-enabled=true"
             - "--hostname-strict=false"
             - "--verbose"
