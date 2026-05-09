@@ -1,3 +1,5 @@
 defaultNamespace: sso-system
 helm:
   releaseName: config
+  valuesFiles:
+    - values.yaml
