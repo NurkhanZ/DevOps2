@@ -1,4 +1,6 @@
 defaultNamespace: sso-system
+dependsOn:
+  - name: sso-system-endterm-dir-infrastructure-argo-rollouts
 helm:
   releaseName: keycloak
   values:

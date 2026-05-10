@@ -4,3 +4,4 @@ helm:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-rollouts
   version: 2.35.1
+  installCRDs: true
