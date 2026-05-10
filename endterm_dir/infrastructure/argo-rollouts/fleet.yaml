@@ -1,7 +1,2 @@
 defaultNamespace: argo-rollouts
-helm:
-  releaseName: argo-rollouts
-  repo: https://argoproj.github.io/argo-helm
-  chart: argo-rollouts
-  version: 2.35.1
-  installCRDs: true
+# No helm section means it's a plain manifest bundle
