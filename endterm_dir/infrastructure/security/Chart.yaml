@@ -1,0 +1,6 @@
+apiVersion: v2
+name: sso-security
+description: Security and RBAC for SSO
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

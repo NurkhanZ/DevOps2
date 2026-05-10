@@ -1,0 +1,5 @@
+apiVersion: v2
+name: sso-config
+description: SSO Infrastructure Configuration
+type: application
+version: 0.1.0

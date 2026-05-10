@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-svc-stable
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: keycloak-stable
+spec:
+  selector:
+    app: keycloak-stable
+  ports:
+  - port: {{ .Values.keycloak.port }}
+    targetPort: {{ .Values.keycloak.port }}
+{{- if .Values.keycloak.canary.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-svc-canary
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: keycloak-canary
+spec:
+  selector:
+    app: keycloak-canary
+  ports:
+  - port: {{ .Values.keycloak.port }}
+    targetPort: {{ .Values.keycloak.port }}
+{{- end }}

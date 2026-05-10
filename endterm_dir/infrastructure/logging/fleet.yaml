@@ -1,0 +1,7 @@
+defaultNamespace: sso-system
+helm:
+  releaseName: sso-logging
+  values:
+    global:
+      domain: sso-system.test
+      namespace: sso-system
