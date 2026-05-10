@@ -54,7 +54,7 @@ spec:
                 - ALL
           env:
             - name: JAVA_OPTS_APPEND
-              value: "-Djava.net.preferIPv4Stack=true -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m"
+              value: "-Djava.net.preferIPv4Stack=true -Xms256m -Xmx512m"
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
@@ -176,7 +176,7 @@ spec:
                 - ALL
           env:
             - name: JAVA_OPTS_APPEND
-              value: "-Djava.net.preferIPv4Stack=true -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m"
+              value: "-Djava.net.preferIPv4Stack=true -Xms256m -Xmx512m"
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
