@@ -25,6 +25,7 @@ spec:
             - "start"
             - "--http-enabled=true"
             - "--hostname-strict=false"
+            - "--http-management-port=9000"
           ports:
             - containerPort: 8080
               name: http
