@@ -15,7 +15,6 @@ spec:
     - endterm_dir/infrastructure/observability
     - endterm_dir/apps/postgres
     - endterm_dir/apps/keycloak
+  defaultNamespace: sso-system
   targets:
     - clusterName: local
-      namespace: sso-system
-      createNamespace: true
