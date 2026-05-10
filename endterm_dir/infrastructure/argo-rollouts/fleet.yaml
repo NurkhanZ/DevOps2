@@ -1,4 +1,6 @@
 defaultNamespace: argo-rollouts
+labels:
+  app: argo-rollouts-controller
 helm:
   releaseName: argo-rollouts
   repo: https://argoproj.github.io/argo-helm
