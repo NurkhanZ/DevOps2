@@ -15,3 +15,5 @@ spec:
     - endterm_dir/apps/keycloak
   targets:
     - clusterName: local
+      namespace: sso-system
+      createNamespace: true
