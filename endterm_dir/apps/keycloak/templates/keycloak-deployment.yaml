@@ -1,28 +1,18 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
-  name: keycloak-stable
+  name: keycloak
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.keycloak.replicaCount }}
   selector:
     matchLabels:
-      app: keycloak-stable
+      app: keycloak
   template:
     metadata:
       labels:
-        app: keycloak-stable
+        app: keycloak
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - keycloak-stable
-              topologyKey: "kubernetes.io/hostname"
       securityContext:
         runAsUser: 1000
         runAsNonRoot: true
@@ -93,101 +83,17 @@ spec:
               path: /health/live
               port: 9000
             periodSeconds: 15
-{{- if .Values.keycloak.canary.enabled }}
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: keycloak-canary
-  namespace: {{ .Release.Namespace }}
-spec:
-  replicas: {{ .Values.keycloak.canary.replicaCount }}
-  selector:
-    matchLabels:
-      app: keycloak-canary
-  template:
-    metadata:
-      labels:
-        app: keycloak-canary
-    spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - keycloak-canary
-              topologyKey: "kubernetes.io/hostname"
-      securityContext:
-        runAsUser: 1000
-        runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-        - name: keycloak
-          image: "{{ .Values.keycloak.canary.image.repository }}:{{ .Values.keycloak.canary.image.tag }}"
-          args:
-            - "start"
-            - "--http-enabled=true"
-            - "--hostname-strict=false"
-          ports:
-            - containerPort: 8080
-              name: http
-            - containerPort: 9000
-              name: management
-          resources:
-            requests:
-              cpu: "300m"
-              memory: "512Mi"
-            limits:
-              cpu: "1000m"
-              memory: "1Gi"
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-          envFrom:
-            - configMapRef:
-                name: keycloak-config
-          env:
-            - name: KC_DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: sso-credentials
-                  key: POSTGRES_USER
-            - name: KC_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: sso-credentials
-                  key: POSTGRES_PASSWORD
-            - name: KC_BOOTSTRAP_ADMIN_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: sso-credentials
-                  key: KEYCLOAK_ADMIN
-            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: sso-credentials
-                  key: KEYCLOAK_ADMIN_PASSWORD
-          startupProbe:
-            httpGet:
-              path: /health/ready
-              port: 9000
-            failureThreshold: 30
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /health/ready
-              port: 9000
-            periodSeconds: 10
-            failureThreshold: 3
-          livenessProbe:
-            httpGet:
-              path: /health/live
-              port: 9000
-            periodSeconds: 15
-{{- end }}
+  strategy:
+    canary:
+      canaryService: keycloak-svc-canary
+      stableService: keycloak-svc-stable
+      trafficRouting:
+        traefik:
+          weightedTraefikServiceName: traefik-canary-splitter
+      steps:
+        - setWeight: 20
+        - pause: {duration: 1m}
+        - setWeight: 50
+        - pause: {duration: 2m}
+        - setWeight: 80
+        - pause: {duration: 1m}

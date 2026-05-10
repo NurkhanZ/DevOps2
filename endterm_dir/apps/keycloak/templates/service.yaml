@@ -3,27 +3,23 @@ kind: Service
 metadata:
   name: keycloak-svc-stable
   namespace: {{ .Release.Namespace }}
-  labels:
-    app: keycloak-stable
 spec:
   selector:
-    app: keycloak-stable
+    app: keycloak # This will be managed by Argo Rollouts
   ports:
   - port: {{ .Values.keycloak.port }}
     targetPort: {{ .Values.keycloak.port }}
-{{- if .Values.keycloak.canary.enabled }}
+    name: http
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: keycloak-svc-canary
   namespace: {{ .Release.Namespace }}
-  labels:
-    app: keycloak-canary
 spec:
   selector:
-    app: keycloak-canary
+    app: keycloak # This will be managed by Argo Rollouts
   ports:
   - port: {{ .Values.keycloak.port }}
     targetPort: {{ .Values.keycloak.port }}
-{{- end }}
+    name: http

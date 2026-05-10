@@ -1,0 +1,6 @@
+defaultNamespace: argo-rollouts
+helm:
+  releaseName: argo-rollouts
+  repo: https://argoproj.github.io/argo-helm
+  chart: argo-rollouts
+  version: 2.35.1
