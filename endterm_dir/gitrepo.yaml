@@ -7,8 +7,11 @@ spec:
   repo: https://github.com/NurkhanZ/DevOps2.git
   branch: main
   paths:
-    - endterm_dir/config
-    - endterm_dir/postgres
-    - endterm_dir/keycloak
+    - endterm_dir/infrastructure/networking
+    - endterm_dir/infrastructure/security
+    - endterm_dir/infrastructure/logging
+    - endterm_dir/infrastructure/observability
+    - endterm_dir/apps/postgres
+    - endterm_dir/apps/keycloak
   targets:
     - clusterName: local
