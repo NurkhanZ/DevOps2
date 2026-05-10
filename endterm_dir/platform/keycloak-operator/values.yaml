@@ -1,0 +1,10 @@
+global:
+  namespace: sso-system
+  domain: sso-system.test
+
+image:
+  repository: python
+  tag: 3.9-slim
+
+keycloak:
+  url: "http://keycloak-stable.sso-system.svc.cluster.local:8080"

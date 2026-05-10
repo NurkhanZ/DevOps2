@@ -52,13 +52,10 @@ spec:
             capabilities:
               drop:
                 - ALL
+          envFrom:
+            - configMapRef:
+                name: keycloak-config
           env:
-            - name: JAVA_OPTS_APPEND
-              value: "-Djava.net.preferIPv4Stack=true -Xms256m -Xmx512m"
-            - name: KC_DB
-              value: postgres
-            - name: KC_DB_URL
-              value: jdbc:postgresql://postgres-service-headless.{{ .Release.Namespace }}.svc.cluster.local:5432/keycloak?sslmode=disable
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -69,26 +66,6 @@ spec:
                 secretKeyRef:
                   name: sso-credentials
                   key: POSTGRES_PASSWORD
-            - name: KC_HTTP_ENABLED
-              value: "true"
-            - name: KC_HOSTNAME_STRICT
-              value: "false"
-            - name: KC_HOSTNAME_STRICT_HTTPS
-              value: "false"
-            - name: KC_HOSTNAME_URL
-              value: "https://{{ .Values.global.domain }}"
-            - name: KC_HOSTNAME_ADMIN_URL
-              value: "https://{{ .Values.global.domain }}"
-            - name: KC_PROXY_HEADERS
-              value: "xforwarded"
-            - name: KC_HEALTH_ENABLED
-              value: "true"
-            - name: KC_HOSTNAME
-              value: "https://{{ .Values.global.domain }}"
-            - name: KC_HOSTNAME_ADMIN
-              value: "https://{{ .Values.global.domain }}"
-            - name: KC_CACHE
-              value: "ispn"
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -172,13 +149,10 @@ spec:
             capabilities:
               drop:
                 - ALL
+          envFrom:
+            - configMapRef:
+                name: keycloak-config
           env:
-            - name: JAVA_OPTS_APPEND
-              value: "-Djava.net.preferIPv4Stack=true -Xms256m -Xmx512m"
-            - name: KC_DB
-              value: postgres
-            - name: KC_DB_URL
-              value: jdbc:postgresql://postgres-service-headless.{{ .Release.Namespace }}.svc.cluster.local:5432/keycloak?sslmode=disable
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -189,26 +163,6 @@ spec:
                 secretKeyRef:
                   name: sso-credentials
                   key: POSTGRES_PASSWORD
-            - name: KC_HTTP_ENABLED
-              value: "true"
-            - name: KC_HOSTNAME_STRICT
-              value: "false"
-            - name: KC_HOSTNAME_STRICT_HTTPS
-              value: "false"
-            - name: KC_HOSTNAME_URL
-              value: "https://{{ .Values.global.domain }}"
-            - name: KC_HOSTNAME_ADMIN_URL
-              value: "https://{{ .Values.global.domain }}"
-            - name: KC_PROXY_HEADERS
-              value: "xforwarded"
-            - name: KC_HEALTH_ENABLED
-              value: "true"
-            - name: KC_HOSTNAME
-              value: "https://{{ .Values.global.domain }}"
-            - name: KC_HOSTNAME_ADMIN
-              value: "https://{{ .Values.global.domain }}"
-            - name: KC_CACHE
-              value: "ispn"
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:

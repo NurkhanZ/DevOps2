@@ -1,0 +1,6 @@
+apiVersion: v2
+name: keycloak-operator
+description: Operator for managing Keycloak Clients via CRD
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

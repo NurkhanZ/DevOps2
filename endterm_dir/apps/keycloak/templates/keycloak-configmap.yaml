@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-config
+  namespace: {{ .Release.Namespace }}
+data:
+  JAVA_OPTS_APPEND: "-Djava.net.preferIPv4Stack=true -Xms256m -Xmx512m"
+  KC_DB: postgres
+  KC_DB_URL: jdbc:postgresql://postgres-service-headless.{{ .Release.Namespace }}.svc.cluster.local:5432/keycloak?sslmode=disable
+  KC_HTTP_ENABLED: "true"
+  KC_HOSTNAME_STRICT: "false"
+  KC_HOSTNAME_STRICT_HTTPS: "false"
+  KC_HOSTNAME_URL: "https://{{ .Values.global.domain }}"
+  KC_HOSTNAME_ADMIN_URL: "https://{{ .Values.global.domain }}"
+  KC_PROXY_HEADERS: "xforwarded"
+  KC_HEALTH_ENABLED: "true"
+  KC_HOSTNAME: "https://{{ .Values.global.domain }}"
+  KC_HOSTNAME_ADMIN: "https://{{ .Values.global.domain }}"
+  KC_CACHE: "ispn"

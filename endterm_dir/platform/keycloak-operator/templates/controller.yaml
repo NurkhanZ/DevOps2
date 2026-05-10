@@ -1,0 +1,18 @@
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: keycloak-client-controller
+spec:
+  generateSelector: true
+  parentResource:
+    apiVersion: sso.system/v1alpha1
+    resource: keycloakclients
+  childResources:
+    - apiVersion: v1
+      resource: secrets
+      updateStrategy:
+        method: InPlace
+  hooks:
+    sync:
+      webhook:
+        url: http://keycloak-operator-service.{{ .Values.global.namespace }}.svc.cluster.local/sync

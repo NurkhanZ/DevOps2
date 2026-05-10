@@ -1,0 +1,41 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: keycloakclients.sso.system
+spec:
+  group: sso.system
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                clientId:
+                  type: string
+                rootUrl:
+                  type: string
+                redirectUris:
+                  type: array
+                  items:
+                    type: string
+                secretName:
+                  type: string
+            status:
+              type: object
+              properties:
+                phase:
+                  type: string
+                observedGeneration:
+                  type: integer
+  scope: Namespaced
+  names:
+    plural: keycloakclients
+    singular: keycloakclient
+    kind: KeycloakClient
+    shortNames:
+      - kcclient

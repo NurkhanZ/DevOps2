@@ -7,6 +7,8 @@ spec:
   repo: https://github.com/NurkhanZ/DevOps2.git
   branch: main
   paths:
+    - endterm_dir/platform/crds
+    - endterm_dir/platform/keycloak-operator
     - endterm_dir/infrastructure/networking
     - endterm_dir/infrastructure/security
     - endterm_dir/infrastructure/logging

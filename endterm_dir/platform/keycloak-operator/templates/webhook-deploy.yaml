@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak-operator
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak-operator
+  template:
+    metadata:
+      labels:
+        app: keycloak-operator
+    spec:
+      containers:
+      - name: webhook
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        command: ["python", "/hooks/sync.py"]
+        env:
+        - name: KC_URL
+          value: {{ .Values.keycloak.url }}
+        - name: KEYCLOAK_ADMIN
+          valueFrom:
+            secretKeyRef:
+              name: sso-credentials
+              key: KEYCLOAK_ADMIN
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sso-credentials
+              key: KEYCLOAK_ADMIN_PASSWORD
+        volumeMounts:
+        - name: code
+          mountPath: /hooks
+        ports:
+        - containerPort: 8080
+      volumes:
+      - name: code
+        configMap:
+          name: keycloak-operator-code
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-operator-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  selector:
+    app: keycloak-operator
+  ports:
+  - port: 80
+    targetPort: 8080

@@ -1,0 +1,11 @@
+apiVersion: sso.system/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: demo-app-client
+  namespace: sso-system
+spec:
+  clientId: "demo-app"
+  rootUrl: "https://demo.sso-system.test"
+  redirectUris:
+    - "https://demo.sso-system.test/login"
+  secretName: "demo-app-secret"
