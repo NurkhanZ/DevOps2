@@ -1,6 +1,6 @@
 keycloak:
   appName: keycloak
-  replicaCount: 1
+  replicaCount: 2
   image:
     repository: quay.io/keycloak/keycloak
     tag: 26.6.0
