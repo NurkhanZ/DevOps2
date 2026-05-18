@@ -3,7 +3,7 @@ keycloak:
   replicaCount: 1
   image:
     repository: quay.io/keycloak/keycloak
-    tag: 26.6.1
+    tag: "26"
   port: 8080
   canary:
     enabled: false
