@@ -88,9 +88,6 @@ spec:
     canary:
       canaryService: keycloak-svc-canary
       stableService: keycloak-svc-stable
-      trafficRouting:
-        traefik:
-          weightedTraefikServiceName: traefik-canary-splitter
       steps:
         - setWeight: 20
         - pause: {duration: 1m}
