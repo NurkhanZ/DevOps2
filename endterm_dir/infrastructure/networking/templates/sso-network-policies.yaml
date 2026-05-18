@@ -47,7 +47,7 @@ spec:
         matchExpressions:
           - key: app
             operator: In
-            values: ["keycloak-stable", "keycloak-canary"]
+            values: ["keycloak", "keycloak-stable", "keycloak-canary"]
     ports:
     - protocol: TCP
       port: 5432
@@ -63,7 +63,7 @@ spec:
     matchExpressions:
       - key: app
         operator: In
-        values: ["keycloak-stable", "keycloak-canary"]
+        values: ["keycloak", "keycloak-stable", "keycloak-canary"]
   policyTypes:
   - Ingress
   ingress:
@@ -89,7 +89,7 @@ spec:
     matchExpressions:
       - key: app
         operator: In
-        values: ["keycloak-stable", "keycloak-canary"]
+        values: ["keycloak", "keycloak-stable", "keycloak-canary"]
   policyTypes:
   - Egress
   egress:
@@ -132,7 +132,7 @@ spec:
     matchExpressions:
       - key: app
         operator: In
-        values: ["keycloak-stable", "keycloak-canary"]
+        values: ["keycloak", "keycloak-stable", "keycloak-canary"]
   policyTypes:
   - Ingress
   - Egress
@@ -142,7 +142,7 @@ spec:
         matchExpressions:
           - key: app
             operator: In
-            values: ["keycloak-stable", "keycloak-canary"]
+            values: ["keycloak", "keycloak-stable", "keycloak-canary"]
     ports:
     - protocol: TCP
       port: 7800
@@ -152,7 +152,7 @@ spec:
         matchExpressions:
           - key: app
             operator: In
-            values: ["keycloak-stable", "keycloak-canary"]
+            values: ["keycloak", "keycloak-stable", "keycloak-canary"]
     ports:
     - protocol: TCP
       port: 7800
