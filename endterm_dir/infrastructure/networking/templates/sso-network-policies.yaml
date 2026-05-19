@@ -178,6 +178,8 @@ spec:
       port: 3100 # Loki
     - protocol: TCP
       port: 8429 # Victoria Metrics (VMSingle)
+    - protocol: TCP
+      port: 9000 # Keycloak management port
   egress:
   - to:
     - podSelector: {}
@@ -188,6 +190,8 @@ spec:
       port: 3100
     - protocol: TCP
       port: 8429
+    - protocol: TCP
+      port: 9000
 ---
 # Allow all pods in sso-system to communicate with the Kubernetes API Server on port 443 (required for discovery and operators)
 apiVersion: networking.k8s.io/v1
