@@ -156,3 +156,36 @@ spec:
     ports:
     - protocol: TCP
       port: 7800
+---
+# Allow internal observability traffic (Loki, Grafana, Victoria Metrics)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-observability-traffic
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector: {} # Applies to all pods in the namespace
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 3000 # Grafana
+    - protocol: TCP
+      port: 3100 # Loki
+    - protocol: TCP
+      port: 8429 # Victoria Metrics (VMSingle)
+  egress:
+  - to:
+    - podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 3000
+    - protocol: TCP
+      port: 3100
+    - protocol: TCP
+      port: 8429
+
