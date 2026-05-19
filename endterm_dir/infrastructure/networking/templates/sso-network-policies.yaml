@@ -201,8 +201,7 @@ spec:
   - Egress
   egress:
   - to:
-    - ipBlock:
-        cidr: 0.0.0.0/0
+    - namespaceSelector: {}
     ports:
     - protocol: TCP
       port: 443
