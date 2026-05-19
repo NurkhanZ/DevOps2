@@ -8,6 +8,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            app: postgres-backup
         spec:
           containers:
           - name: postgres-backup
@@ -17,7 +20,14 @@ spec:
             - -c
             - |
               export PGPASSWORD=$POSTGRES_PASSWORD
-              pg_dump -h postgres-service-headless -U $POSTGRES_USER keycloak > /backup/keycloak_$(date +%F).sql
+              BACKUP_FILE="/backup/keycloak_$(date +%F).sql"
+              pg_dump -h postgres-service-headless -U $POSTGRES_USER keycloak > $BACKUP_FILE
+              
+              echo "Installing AWS CLI..."
+              apk add --no-cache aws-cli
+              
+              echo "Uploading backup to S3..."
+              aws --endpoint-url=$S3_ENDPOINT s3 cp $BACKUP_FILE $S3_BUCKET/keycloak_$(date +%F).sql
             env:
             - name: POSTGRES_USER
               valueFrom:
@@ -29,6 +39,31 @@ spec:
                 secretKeyRef:
                   name: sso-credentials
                   key: POSTGRES_PASSWORD
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-s3-backup-credentials
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-s3-backup-credentials
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-s3-backup-credentials
+                  key: S3_BUCKET
+            - name: S3_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-s3-backup-credentials
+                  key: S3_REGION
+            - name: S3_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-s3-backup-credentials
+                  key: S3_ENDPOINT
             volumeMounts:
             - name: backup-storage
               mountPath: /backup
@@ -37,3 +72,4 @@ spec:
           - name: backup-storage
             persistentVolumeClaim:
               claimName: postgres-snapshots-pvc
+
