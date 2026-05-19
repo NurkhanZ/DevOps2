@@ -17,8 +17,20 @@ data:
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_node_name]
+            target_label: __host__
           - source_labels: [__meta_kubernetes_pod_label_app]
             target_label: app
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            target_label: container
+          - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
+            separator: /
+            target_label: __path__
+            replacement: /var/log/pods/*$1/*.log
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -98,6 +110,7 @@ spec:
       labels:
         app: promtail
     spec:
+      serviceAccountName: promtail
       securityContext:
         seccompProfile:
           type: RuntimeDefault
@@ -135,3 +148,37 @@ spec:
       - name: config
         configMap:
           name: promtail-config
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: promtail
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: promtail-clusterrole
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/proxy
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: promtail-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: promtail
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: promtail-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+
