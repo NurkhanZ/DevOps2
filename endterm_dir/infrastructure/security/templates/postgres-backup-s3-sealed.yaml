@@ -1,0 +1,18 @@
+{{- if .Values.sealedSecrets.enabled }}
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: postgres-s3-backup-credentials
+  namespace: {{ .Release.Namespace }}
+spec:
+  encryptedData:
+    AWS_ACCESS_KEY_ID: {{ .Values.sealedSecrets.postgresS3Backup.AWS_ACCESS_KEY_ID | quote }}
+    AWS_SECRET_ACCESS_KEY: {{ .Values.sealedSecrets.postgresS3Backup.AWS_SECRET_ACCESS_KEY | quote }}
+    S3_BUCKET: {{ .Values.sealedSecrets.postgresS3Backup.S3_BUCKET | quote }}
+    S3_REGION: {{ .Values.sealedSecrets.postgresS3Backup.S3_REGION | quote }}
+    S3_ENDPOINT: {{ .Values.sealedSecrets.postgresS3Backup.S3_ENDPOINT | quote }}
+  template:
+    metadata:
+      name: postgres-s3-backup-credentials
+    type: Opaque
+{{- end }}
