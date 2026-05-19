@@ -14,6 +14,7 @@ data:
   KC_HOSTNAME_ADMIN_URL: "https://{{ .Values.global.domain }}"
   KC_PROXY_HEADERS: "xforwarded"
   KC_HEALTH_ENABLED: "true"
+  KC_METRICS_ENABLED: "true"
   KC_HOSTNAME: "https://{{ .Values.global.domain }}"
   KC_HOSTNAME_ADMIN: "https://{{ .Values.global.domain }}"
   KC_CACHE: "ispn"

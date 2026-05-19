@@ -27,10 +27,10 @@ data:
             target_label: pod
           - source_labels: [__meta_kubernetes_pod_container_name]
             target_label: container
-          - source_labels: [__meta_kubernetes_pod_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_name]
-            separator: _
+          - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
+            separator: /
             target_label: __path__
-            replacement: /var/log/containers/$1-*.log
+            replacement: /var/log/pods/*$1/*.log
 ---
 apiVersion: apps/v1
 kind: StatefulSet

@@ -22,3 +22,28 @@ spec:
     limits:
       cpu: "200m"
       memory: "150Mi"
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMAgent
+metadata:
+  name: sso-metrics-agent
+  namespace: {{ .Release.Namespace }}
+spec:
+  selectAllByDefault: true
+  remoteWrite:
+    - url: http://vmsingle-sso-metrics-db.sso-system.svc.cluster.local:8429/api/v1/write
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: keycloak-pod-scrape
+  namespace: {{ .Release.Namespace }}
+spec:
+  podMetricsEndpoints:
+  - port: management
+    path: /metrics
+    interval: 15s
+  selector:
+    matchLabels:
+      app: keycloak
+
